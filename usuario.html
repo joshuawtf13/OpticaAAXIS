@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Óptica AAXIS</title>
+  <link rel="icon" type="image/png" href="logoOptica.png" />
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .categoria-section {
+      margin: 30px;
+    }
+
+    .categoria-section h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .productos-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .producto-card {
+      width: 200px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      overflow: hidden;
+      text-align: center;
+      transition: transform 0.3s ease;
+      background-color: #fff;
+      cursor: pointer;
+    }
+
+    .producto-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .producto-card:hover {
+      transform: scale(1.05);
+    }
+
+    .producto-card p {
+      margin: 8px;
+    }
+
+    .producto-card a {
+      font-size: 13px;
+      color: #007BFF;
+      text-decoration: none;
+    }
+
+    .carrusel-container {
+      overflow: hidden;
+      width: 100%;
+      margin: 20px auto;
+    }
+
+    .carrusel {
+      display: flex;
+      transition: transform 1s ease-in-out;
+    }
+
+    .carrusel img {
+      height: 300px;
+      object-fit: cover;
+      margin-right: 10px;
+      border-radius: 10px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-contenido {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      position: relative;
+    }
+
+    .modal-contenido img {
+      width: 100%;
+      height: 250px;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    .modal-detalles p {
+      margin: 10px 0;
+    }
+
+    .cerrar {
+      position: absolute;
+      top: 10px; right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .producto-card {
+        width: 45%;
+      }
+
+      .carrusel img {
+        height: 200px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .producto-card {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <a href="usuario.html">
+        <img src="logoOptica.png" alt="Logo Óptica AAXIS" class="logo" />
+      </a>
+    </div>
+    <nav>
+      <a href="usuario.html">Inicio</a>
+      <a href="lentes.html">Caballeros</a>
+      <a href="niños.html">Niños</a>
+      <a href="niñas.html">Niñas</a>
+      <a href="damas.html">Damas</a>
+      <a href="accesorios.html">Accesorios</a>
+      <a href="promociones.html">Promociones</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="agendaTuCita.html">Agenda Tu Cita</a>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    <section class="carrusel-container" id="carrusel-container">
+      <div class="carrusel" id="carrusel"></div>
+    </section>
+    <section id="productos-recientes" class="categoria-section"></section>
+  </main>
+
+  <footer class="footer">
+    <div class="admin-link">
+      <a href="login.html">Administrador</a>
+    </div>
+    <div class="footer-info">
+      <p><strong>Atención al Cliente:</strong> Lunes a Viernes de 10:00 am - 8:00 pm</p>
+      <p><strong>Sábado:</strong> 11:00 am - 5:00 pm</p>
+      <p><i class="fab fa-whatsapp"></i> +52 221 582 7775</p>
+      <p><i class="fab fa-google"></i> angietrejo1403@gmail.com</p>
+    </div>
+  </footer>
+
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-contenido">
+      <span class="cerrar" onclick="cerrarModal()">&times;</span>
+      <img id="modal-img" src="" alt="Imagen del producto">
+      <div class="modal-detalles">
+        <p id="modal-descripcion"></p>
+        <p id="modal-precio"></p>
+        <p id="modal-categoria"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      cargarCarruselPromociones();
+      mostrarProductos();
+    });
+
+    function cargarCarruselPromociones() {
+      const carruselContainer = document.getElementById("carrusel-container");
+      const carrusel = document.getElementById("carrusel");
+      carrusel.innerHTML = "";
+      const promociones = JSON.parse(localStorage.getItem("promociones")) || [];
+
+      if (promociones.length === 0) {
+        carruselContainer.style.display = "none";
+        return;
+      }
+
+      promociones.forEach((promocion, index) => {
+        const img = document.createElement("img");
+        img.src = promocion.imagen;
+        img.alt = `Promoción ${index + 1}`;
+        carrusel.appendChild(img);
+      });
+
+      iniciarCarrusel();
+    }
+
+    function iniciarCarrusel() {
+      const carrusel = document.getElementById("carrusel");
+      const total = carrusel.children.length;
+      if (total === 0) return;
+
+      let index = 0;
+      setInterval(() => {
+        const anchoContenedor = carrusel.parentElement.offsetWidth;
+        carrusel.style.transform = `translateX(-${index * anchoContenedor}px)`;
+        index = (index + 1) % total;
+      }, 5000);
+    }
+
+    function mostrarProductos() {
+      const categorias = {
+        caballero: { nombre: "Caballeros", enlace: "lentes.html" },
+        dama: { nombre: "Damas", enlace: "damas.html" },
+        niños: { nombre: "Niños", enlace: "niños.html" },
+        niñas: { nombre: "Niñas", enlace: "niñas.html" },
+        accesorios: { nombre: "Accesorios", enlace: "accesorios.html" }
+      };
+
+      const productosTodos = [];
+
+      Object.keys(categorias).forEach(cat => {
+        const productos = JSON.parse(localStorage.getItem(cat)) || [];
+        productos.forEach(p => {
+          productosTodos.push({ ...p, categoria: cat });
+        });
+      });
+
+      const recientes = productosTodos.reverse().slice(0, 15);
+
+      const section = document.getElementById("productos-recientes");
+      section.innerHTML = "";
+
+      const titulo = document.createElement("h2");
+      titulo.textContent = "Productos Nuevos";
+      section.appendChild(titulo);
+
+      const contenedor = document.createElement("div");
+      contenedor.className = "productos-container";
+
+      recientes.forEach(producto => {
+        const info = categorias[producto.categoria] || { nombre: "Desconocida", enlace: "#" };
+        const card = document.createElement("div");
+        card.className = "producto-card";
+        card.innerHTML = `
+          <img src="${producto.imagen}" alt="Producto">
+          <p><strong>${producto.descripcion}</strong></p>
+          <p>$${producto.precio}</p>
+          <p style="font-size: 14px;">Categoría: ${info.nombre}</p>
+          <a href="${info.enlace}">Ver más productos</a>
+        `;
+        card.addEventListener("click", () => {
+          mostrarModal(producto, info.nombre);
+        });
+        contenedor.appendChild(card);
+      });
+
+      section.appendChild(contenedor);
+    }
+
+    function mostrarModal(producto, categoriaNombre) {
+      document.getElementById("modal-img").src = producto.imagen;
+      document.getElementById("modal-descripcion").textContent = `Descripción: ${producto.descripcion}`;
+      document.getElementById("modal-precio").textContent = `Precio: $${producto.precio}`;
+      document.getElementById("modal-categoria").textContent = `Categoría: ${categoriaNombre}`;
+      document.getElementById("modal").style.display = "flex";
+    }
+
+    function cerrarModal() {
+      document.getElementById("modal").style.display = "none";
+    }
+  </script>
+</body>
+</html>
