@@ -1,0 +1,478 @@
+/* Estilos generales */
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+  }
+  
+  .logo {
+    height: 90px;
+    object-fit: contain;
+  }
+  
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #ffffff;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+nav {
+    text-align: center;
+    margin: 10px 0;
+}
+
+nav a {
+    color: #000000;
+    text-decoration: none;
+    padding: 10px 15px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    color: #fff;
+    background-color: #4682B4;
+    border-radius: 5px;
+}
+/* CARRUSEL */
+.carrusel-container {
+    overflow: hidden;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+  }
+  
+  .carrusel {
+    display: flex;
+    transition: transform 1s ease-in-out;
+    width: 100%;
+  }
+  
+  .carrusel img {
+    width: 100%;
+    max-width: 1000px;
+    height: auto;
+    object-fit: contain;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+  
+  /* Footer */
+  .footer {
+    background-color: #f2f2f2;
+    padding: 20px;
+    text-align: center;
+    margin-top: 40px;
+  }
+  
+  .footer-info {
+    margin-top: 10px;
+  }
+/* Estilos específicos del catálogo */
+.catalogo {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.producto, .promocion {
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 200px;
+}
+
+.producto img, .promocion img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+/* Estilos para la administración */
+.admin-container {
+    width: 60%;
+    margin: 20px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.admin-container h2 {
+    text-align: center;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin: 10px 0 5px;
+}
+
+select, textarea, input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.admin-preview-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.admin-nav {
+    text-align: center;
+    margin: 10px 0;
+}
+
+.admin-nav a {
+    color: #333;
+    text-decoration: none;
+    padding: 10px 15px;
+    font-weight: bold;
+    margin: 5px;
+    display: inline-block;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+}
+
+.admin-nav a:hover {
+    background-color: #4682B4;
+    color: white;
+}
+
+.admin-select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+.admin-action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+button {
+    background-color: #87CEEB;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #4682B4;
+}
+
+.admin-delete-button {
+    background-color: red;
+    color: white;
+}
+
+.formulario {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+/* Estilos para el carrusel de promociones */
+.carrusel-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    overflow: hidden;
+    position: relative;
+    border-radius: 10px;
+}
+
+.carrusel {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.carrusel img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+/* Controles del carrusel */
+.carrusel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.carrusel-btn.left {
+    left: 10px;
+}
+
+.carrusel-btn.right {
+    right: 10px;
+}
+
+.carrusel-btn:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Nosotros*/
+.nosotros-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+    gap: 40px;
+}
+
+.nosotros-texto {
+    width: 55%;
+    text-align: left;
+}
+
+.nosotros-mapa {
+    width: 45%;
+}
+
+.nosotros-mapa h2 {
+    margin-bottom: 10px;
+    text-align: left;
+    font-size: 22px;
+}
+
+.nosotros-mapa iframe {
+    width: 100%;
+    height: 300px;
+    border: none;
+    border-radius: 10px;
+}
+
+/* Footer */
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+}
+
+.footer {
+    background-color: #0000FF;
+    padding: 20px;
+    text-align: left;
+    color: white;
+    font-size: 16px;
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-info {
+    margin-left: 30px;
+}
+.admin-link {
+    margin-left: 30px;
+}
+
+.admin-link a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 8px 15px;
+    border-radius: 5px;
+    background-color: #4682B4;
+    transition: 0.3s;
+}
+
+.admin-link a:hover {
+    background-color: #1E4D7A;
+}
+
+/*promociones*/
+.promo-list {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+}
+
+.promo-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 15px 0;
+    border-bottom: 1px solid #e0e0e0;
+    transition: background-color 0.3s ease;
+}
+
+.promo-item:hover {
+    background-color: #eef6fc;
+    border-radius: 8px;
+}
+
+.promo-item img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid #87CEEB;
+}
+
+.promo-info {
+    flex: 1;
+    color: #333;
+}
+
+.promo-info p {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.promo-info p strong {
+    color: #4682B4;
+}
+
+/* Estilos agregados por mejoras */
+
+.info-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    margin: 30px auto;
+    max-width: 1200px;
+    padding: 0 20px;
+}
+
+/* Estilo del mapa */
+.nosotros-texto {
+    flex: 1;
+    text-align: center;
+}
+
+.nosotros-texto iframe {
+    width: 100%;
+    height: 600px;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.nosotros-texto iframe:hover {
+    transform: scale(1.02);
+}
+
+/* Estilo de Instagram */
+.instagram-gallery {
+    flex: 1;
+    text-align: center;
+}
+
+.instagram-gallery h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #000508;
+}
+
+/* Animación del título */
+.animated-title {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideUp 1s ease forwards;
+}
+
+@keyframes slideUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-contenido {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+}
+
+.modal-contenido img {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+  margin-bottom: 15px;
+  border-radius: 10px;
+}
+
+.modal-detalles p {
+  margin: 8px 0;
+  font-size: 16px;
+}
+
+.cerrar {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+}
