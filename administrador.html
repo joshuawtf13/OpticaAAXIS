@@ -252,7 +252,8 @@ function crearCheckboxesProductos() {
     const precio = document.getElementById("precioProducto").value.trim();
     const categoria = document.getElementById("categoriaProducto").value;
 
-    if (!imagen.startsWith("data:image") || !descripcion || !precio || !categoria) {
+    if (!imagen || !descripcion || !precio || !categoria) {
+
   alert("Faltan campos o imagen inválida");
   return;
 } else {
@@ -362,7 +363,8 @@ cargarProductosEnSelector();
   const categorias = Array.from(document.querySelectorAll("input[name='categoriaPromo']:checked")).map(c => c.value);
   const productos = Array.from(document.querySelectorAll("input[name='productoPromo']:checked")).map(p => JSON.parse(p.value));
 
-  if (!imagen.startsWith("data:image") || !descripcion || !vencimiento) {
+  if (!imagen || !descripcion || !vencimiento) {
+
     alert("Faltan campos o imagen inválida");
     return;
   }
