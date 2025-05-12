@@ -245,18 +245,17 @@ function crearCheckboxesProductos() {
   });
 }
 
-  function subirProducto() {
-   const imagen = document.getElementById("urlImagenProducto").value;
+ function subirProducto() {
+  const imagen = document.getElementById("urlImagenProducto").value;
+  const descripcion = document.getElementById("descripcionProducto").value.trim();
+  const precio = document.getElementById("precioProducto").value.trim();
+  const categoria = document.getElementById("categoriaProducto").value;
 
-    const descripcion = document.getElementById("descripcionProducto").value.trim();
-    const precio = document.getElementById("precioProducto").value.trim();
-    const categoria = document.getElementById("categoriaProducto").value;
+  if (!imagen || !descripcion || !precio || !categoria) {
+    alert("Faltan campos o imagen inválida");
+    return;
+  }
 
-    if (!imagen || !descripcion || !precio || !categoria) {
-
-  alert("Faltan campos o imagen inválida");
-  return;
-} else {
   let productos = JSON.parse(localStorage.getItem(categoria)) || [];
   if (productos.length >= 200) {
     alert("Límite de 200 productos alcanzado en esta categoría.");
@@ -272,13 +271,11 @@ function crearCheckboxesProductos() {
   localStorage.setItem("productosTodos", JSON.stringify(todos));
 
   mostrarAlerta("Producto guardado correctamente.");
-mostrarProductos();
-cargarProductosEnSelector();
-crearCheckboxesProductos();
-
-
-
+  mostrarProductos();
+  cargarProductosEnSelector();
+  crearCheckboxesProductos();
 }
+
 
   }
 
@@ -356,7 +353,6 @@ cargarProductosEnSelector();
 
   function subirPromocion() {
   const imagen = document.getElementById("urlImagenPromocion").value;
-
   const descripcion = document.getElementById("descripcionPromocion").value.trim();
   const vencimiento = document.getElementById("vencimientoPromocion").value;
 
@@ -364,7 +360,6 @@ cargarProductosEnSelector();
   const productos = Array.from(document.querySelectorAll("input[name='productoPromo']:checked")).map(p => JSON.parse(p.value));
 
   if (!imagen || !descripcion || !vencimiento) {
-
     alert("Faltan campos o imagen inválida");
     return;
   }
@@ -375,8 +370,8 @@ cargarProductosEnSelector();
 
   mostrarPromociones();
   mostrarAlerta("Promoción guardada correctamente.");
-
 }
+
 
 
 
