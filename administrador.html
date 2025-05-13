@@ -237,7 +237,13 @@ const db = firebase.database("https://optica-aaxis-default-rtdb.firebaseio.com/"
         return;
       }
 
-      const producto = { descripcion, precio, categoria, imagen: imagenURL };
+      const producto = {
+  descripcion,
+  precio: Number(precio),
+  categoria,
+  imagen: imagenURL
+};
+
       console.log({ descripcion, precio, categoria, imagenURL });
 
       await db.ref(`productos/${categoria}`).push(producto);
