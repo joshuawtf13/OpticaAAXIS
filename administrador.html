@@ -599,8 +599,8 @@ function subirACloudinaryProducto(input) {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("upload_preset", "archivoproductos123");
-  
-  fetch("https://api.cloudinary.com/v1_1/AXXISopt/image/upload", {
+
+  fetch("https://api.cloudinary.com/v1_1/axxisopt/image/upload", {
     method: "POST",
     body: formData
   })
@@ -609,6 +609,10 @@ function subirACloudinaryProducto(input) {
     document.getElementById("urlImagenProducto").value = data.secure_url;
     document.getElementById("previewProducto").src = data.secure_url;
     document.getElementById("previewProducto").style.display = "block";
+  })
+  .catch(err => {
+    alert("Error al subir la imagen del producto.");
+    console.error(err);
   });
 }
 
@@ -618,7 +622,7 @@ function subirACloudinaryPromocion(input) {
   formData.append("file", file);
   formData.append("upload_preset", "archivoproductos123");
 
-  fetch("https://api.cloudinary.com/v1_1/AXXISopt/image/upload", {
+  fetch("https://api.cloudinary.com/v1_1/axxisopt/image/upload", {
     method: "POST",
     body: formData
   })
@@ -627,8 +631,13 @@ function subirACloudinaryPromocion(input) {
     document.getElementById("urlImagenPromocion").value = data.secure_url;
     document.getElementById("previewPromocion").src = data.secure_url;
     document.getElementById("previewPromocion").style.display = "block";
+  })
+  .catch(err => {
+    alert("Error al subir la imagen de la promoción.");
+    console.error(err);
   });
 }
+
 
 </script>
 </body>
