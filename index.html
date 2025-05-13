@@ -5,263 +5,97 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Óptica AAXIS</title>
   <link rel="icon" type="image/png" href="logoOptica.png" />
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    .categoria-section {
-      margin: 30px;
+    body { font-family: sans-serif; margin: 0; background: #f0f0f0; }
+    .productos-container, .carrusel { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+    .producto-card, .carrusel img {
+      width: 200px; background: white; border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1); overflow: hidden;
+      text-align: center; transition: transform 0.3s ease;
     }
-
-    .categoria-section h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .productos-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-    }
-
-    .producto-card {
-      width: 200px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      overflow: hidden;
-      text-align: center;
-      transition: transform 0.3s ease;
-      background-color: #fff;
-      cursor: pointer;
-    }
-
-    .producto-card img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-    }
-
-    .producto-card:hover {
-      transform: scale(1.05);
-    }
-
-    .producto-card p {
-      margin: 8px;
-    }
-
-    .producto-card a {
-      font-size: 13px;
-      color: #007BFF;
-      text-decoration: none;
-    }
-
-    .carrusel-container {
-      overflow: hidden;
-      width: 100%;
-      margin: 20px auto;
-    }
-
-    .carrusel {
-      display: flex;
-      transition: transform 1s ease-in-out;
-    }
-
-    .carrusel img {
-      height: 300px;
-      object-fit: cover;
-      margin-right: 10px;
-      border-radius: 10px;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 9999;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      justify-content: center;
-      align-items: center;
-    }
-
-    .modal-contenido {
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 500px;
-      position: relative;
-    }
-
-    .modal-contenido img {
-      width: 100%;
-      height: 250px;
-      object-fit: contain;
-      border-radius: 8px;
-    }
-
-    .modal-detalles p {
-      margin: 10px 0;
-    }
-
-    .cerrar {
-      position: absolute;
-      top: 10px; right: 15px;
-      font-size: 24px;
-      cursor: pointer;
-    }
-
-    @media (max-width: 768px) {
-      .producto-card {
-        width: 45%;
-      }
-
-      .carrusel img {
-        height: 200px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .producto-card {
-        width: 100%;
-      }
-    }
+    .producto-card:hover { transform: scale(1.05); }
+    .producto-card img, .carrusel img { width: 100%; height: 200px; object-fit: cover; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+             background: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
+    .modal-contenido { background: white; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; }
+    .cerrar { float: right; cursor: pointer; font-size: 24px; }
   </style>
 </head>
 <body>
-  <header>
-    <div class="logo-container">
-      <a href="usuario.html">
-        <img src="logoOptica.png" alt="Logo Óptica AAXIS" class="logo" />
-      </a>
-    </div>
-    <nav>
-    
-      <a href="lentes.html">Caballeros</a>
-      <a href="niños.html">Niños</a>
-      <a href="niñas.html">Niñas</a>
-      <a href="damas.html">Damas</a>
-      <a href="accesorios.html">Accesorios</a>
-      <a href="promociones.html">Promociones</a>
-      <a href="nosotros.html">Nosotros</a>
-      <a href="agendaTuCita.html">Agenda Tu Cita</a>
-    </nav>
-  </header>
 
-  <main class="main-content">
-    <section class="carrusel-container" id="carrusel-container">
-      <div class="carrusel" id="carrusel"></div>
-    </section>
-    <section id="productos-recientes" class="categoria-section"></section>
-  </main>
+<header>
+  <h1 style="text-align:center;">Óptica AAXIS</h1>
+</header>
 
-  <footer class="footer">
-    <div class="admin-link">
-      <a href="login.html">Administrador</a>
-    </div>
-    <div class="footer-info">
-      <p><strong>Atención al Cliente:</strong> Lunes a Viernes de 10:00 am - 8:00 pm</p>
-      <p><strong>Sábado:</strong> 11:00 am - 5:00 pm</p>
-      <p><i class="fab fa-whatsapp"></i> +52 221 582 7775</p>
-      <p><i class="fab fa-google"></i> angietrejo1403@gmail.com</p>
-    </div>
-  </footer>
+<main>
+  <!-- Carrusel de promociones -->
+  <section class="carrusel" id="carruselPromos"></section>
 
-  <!-- Modal -->
-  <div id="modal" class="modal">
-    <div class="modal-contenido">
-      <span class="cerrar" onclick="cerrarModal()">&times;</span>
-      <img id="modal-img" src="" alt="Imagen del producto">
-      <div class="modal-detalles">
-        <p id="modal-descripcion"></p>
-        <p id="modal-precio"></p>
-        <p id="modal-categoria"></p>
-      </div>
-    </div>
+  <!-- Productos recientes -->
+  <h2 style="text-align:center;">Productos Nuevos</h2>
+  <section class="productos-container" id="productosRecientes"></section>
+</main>
+
+<!-- Modal -->
+<div id="modal" class="modal" onclick="cerrarModal()">
+  <div class="modal-contenido" onclick="event.stopPropagation()">
+    <span class="cerrar" onclick="cerrarModal()">&times;</span>
+    <img id="modal-img" style="width:100%; height: 250px; object-fit:cover;" />
+    <p id="modal-descripcion"></p>
+    <p id="modal-precio"></p>
+    <p id="modal-categoria"></p>
   </div>
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
 <script>
   const firebaseConfig = {
-  apiKey: "AIzaSyB11z4COh5adtBgNqar2Gx4JtLfIMB-KIg",
-  authDomain: "optica-aaxis.firebaseapp.com",
-  databaseURL: "https://optica-aaxis-default-rtdb.firebaseio.com",
-  projectId: "optica-aaxis",
-  storageBucket: "optica-aaxis.firebasestorage.app",
-  messagingSenderId: "796057879313",
-  appId: "1:796057879313:web:872dc9b3ce45f0172b82b0",
-  measurementId: "G-N3QXM6VMB2"
-};
+    apiKey: "AIzaSyB11z4COh5adtBgNqar2Gx4JtLfIMB-KIg",
+    authDomain: "optica-aaxis.firebaseapp.com",
+    databaseURL: "https://optica-aaxis-default-rtdb.firebaseio.com",
+    projectId: "optica-aaxis",
+    storageBucket: "optica-aaxis.appspot.com",
+    messagingSenderId: "796057879313",
+    appId: "1:796057879313:web:872dc9b3ce45f0172b82b0"
+  };
   const app = firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 </script>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      cargarCarruselPromociones();
-      mostrarProductos();
-    });
+<!-- Lógica para cargar promociones y productos -->
+<script>
+  async function cargarPromociones() {
+    const carrusel = document.getElementById("carruselPromos");
+    carrusel.innerHTML = "";
+    const snapshot = await db.ref("promociones").once("value");
+    const promos = snapshot.val();
+    if (!promos) return;
 
-    function cargarCarruselPromociones() {
-  const carruselContainer = document.getElementById("carrusel-container");
-  const carrusel = document.getElementById("carrusel");
-  carrusel.innerHTML = "";
-
-  firebase.database().ref("promociones").once("value", snapshot => {
-    const promociones = snapshot.val();
-    if (!promociones) {
-      carruselContainer.style.display = "none";
-      return;
-    }
-
-    Object.values(promociones).forEach((promocion, index) => {
+    Object.values(promos).forEach(promo => {
       const img = document.createElement("img");
-      img.src = promocion.imagen;
-      img.alt = `Promoción ${index + 1}`;
+      img.src = promo.imagen;
+      img.alt = promo.descripcion;
       carrusel.appendChild(img);
     });
+  }
 
-    iniciarCarrusel();
-  });
-}
+  async function cargarProductos() {
+    const contenedor = document.getElementById("productosRecientes");
+    contenedor.innerHTML = "";
+    const categorias = ["caballero", "dama", "niños", "niñas", "accesorios"];
+    let todos = [];
 
-
-    function iniciarCarrusel() {
-      const carrusel = document.getElementById("carrusel");
-      const total = carrusel.children.length;
-      if (total === 0) return;
-
-      let index = 0;
-      setInterval(() => {
-        const anchoContenedor = carrusel.parentElement.offsetWidth;
-        carrusel.style.transform = `translateX(-${index * anchoContenedor}px)`;
-        index = (index + 1) % total;
-      }, 5000);
+    for (let cat of categorias) {
+      const snapshot = await db.ref(`productos/${cat}`).once("value");
+      const productos = snapshot.val();
+      if (productos) {
+        Object.values(productos).forEach(p => todos.push({ ...p, categoria: cat }));
+      }
     }
 
-    function mostrarProductos() {
-  const section = document.getElementById("productos-recientes");
-  section.innerHTML = "";
-
-  const titulo = document.createElement("h2");
-  titulo.textContent = "Productos Nuevos";
-  section.appendChild(titulo);
-
-  const contenedor = document.createElement("div");
-  contenedor.className = "productos-container";
-
-  firebase.database().ref("productos").once("value", snapshot => {
-    const data = snapshot.val();
-    if (!data) {
-      contenedor.innerHTML = "<p>No hay productos disponibles.</p>";
-      section.appendChild(contenedor);
-      return;
-    }
-
-    const productos = Object.values(data).reverse().slice(0, 15);
-
-    productos.forEach(producto => {
+    todos.reverse().slice(0, 15).forEach(producto => {
       const card = document.createElement("div");
       card.className = "producto-card";
       card.innerHTML = `
@@ -269,30 +103,29 @@
         <p><strong>${producto.descripcion}</strong></p>
         <p>$${producto.precio}</p>
         <p style="font-size: 14px;">Categoría: ${producto.categoria}</p>
-        <a href="#">Ver más productos</a>
       `;
-      card.addEventListener("click", () => {
-        mostrarModal(producto, producto.categoria);
-      });
+      card.addEventListener("click", () => mostrarModal(producto));
       contenedor.appendChild(card);
     });
+  }
 
-    section.appendChild(contenedor);
-  });
-}
+  function mostrarModal(producto) {
+    document.getElementById("modal-img").src = producto.imagen;
+    document.getElementById("modal-descripcion").textContent = `Descripción: ${producto.descripcion}`;
+    document.getElementById("modal-precio").textContent = `Precio: $${producto.precio}`;
+    document.getElementById("modal-categoria").textContent = `Categoría: ${producto.categoria}`;
+    document.getElementById("modal").style.display = "flex";
+  }
 
+  function cerrarModal() {
+    document.getElementById("modal").style.display = "none";
+  }
 
-    function mostrarModal(producto, categoriaNombre) {
-      document.getElementById("modal-img").src = producto.imagen;
-      document.getElementById("modal-descripcion").textContent = `Descripción: ${producto.descripcion}`;
-      document.getElementById("modal-precio").textContent = `Precio: $${producto.precio}`;
-      document.getElementById("modal-categoria").textContent = `Categoría: ${categoriaNombre}`;
-      document.getElementById("modal").style.display = "flex";
-    }
+  window.onload = () => {
+    cargarPromociones();
+    cargarProductos();
+  };
+</script>
 
-    function cerrarModal() {
-      document.getElementById("modal").style.display = "none";
-    }
-  </script>
 </body>
 </html>
