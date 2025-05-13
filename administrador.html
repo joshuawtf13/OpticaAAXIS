@@ -237,6 +237,8 @@
       }
 
       const producto = { descripcion, precio, categoria, imagen: imagenURL };
+      console.log({ descripcion, precio, categoria, imagenURL });
+
       await firebase.database().ref(`productos/${categoria}`).push(producto);
       mostrarAlerta("Producto guardado correctamente.");
       limpiarFormularioProducto();
