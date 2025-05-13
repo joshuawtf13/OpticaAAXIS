@@ -186,7 +186,8 @@
       appId: "1:796057879313:web:872dc9b3ce45f0172b82b0"
     };
     const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+const db = firebase.database("https://optica-aaxis-default-rtdb.firebaseio.com/");
+
   </script>
 
   <script>
@@ -239,7 +240,7 @@
       const producto = { descripcion, precio, categoria, imagen: imagenURL };
       console.log({ descripcion, precio, categoria, imagenURL });
 
-      await firebase.database().ref(`productos/${categoria}`).push(producto);
+      await db.ref(`productos/${categoria}`).push(producto);
       mostrarAlerta("Producto guardado correctamente.");
       limpiarFormularioProducto();
       mostrarProductos();
@@ -258,7 +259,7 @@
       }
 
       const promo = { descripcion, vencimiento, imagen: imagenURL, categorias, productos };
-      await firebase.database().ref("promociones").push(promo);
+      await db.ref("promociones").push(promo);
       mostrarAlerta("Promoción guardada correctamente.");
       limpiarFormularioPromocion();
       mostrarPromociones();
@@ -270,7 +271,7 @@
   const categorias = ["caballero", "dama", "niños", "niñas", "accesorios"];
 
   categorias.forEach(categoria => {
-    firebase.database().ref(`productos/${categoria}`).once("value")
+    db.ref(`productos/${categoria}`).once("value")
       .then(snapshot => {
         const productos = snapshot.val();
         if (productos) {
@@ -294,12 +295,12 @@
 }
 
 function actualizarCampoProducto(categoria, id, campo, valor) {
-  firebase.database().ref(`productos/${categoria}/${id}/${campo}`).set(valor)
+  db.ref(`productos/${categoria}/${id}/${campo}`).set(valor)
     .then(() => mostrarAlerta("Producto actualizado."));
 }
 
 function eliminarProducto(categoria, id) {
-  firebase.database().ref(`productos/${categoria}/${id}`).remove()
+  db.ref(`productos/${categoria}/${id}`).remove()
     .then(() => {
       mostrarAlerta("Producto eliminado.");
       mostrarProductos();
@@ -310,7 +311,7 @@ function mostrarPromociones() {
   const cont = document.getElementById("listaPromociones");
   cont.innerHTML = "";
 
-  firebase.database().ref("promociones").once("value")
+  db.ref("promociones").once("value")
     .then(snapshot => {
       const promociones = snapshot.val();
       if (!promociones) {
@@ -350,32 +351,32 @@ function mostrarPromociones() {
 }
 
 function actualizarCampoPromocion(id, campo, valor) {
-  firebase.database().ref(`promociones/${id}/${campo}`).set(valor)
+  db.ref(`promociones/${id}/${campo}`).set(valor)
     .then(() => mostrarAlerta("Promoción actualizada."));
 }
 
 function editarCategoriaPromo(id, categoria, checked) {
-  firebase.database().ref(`promociones/${id}/categorias`).once("value")
+  db.ref(`promociones/${id}/categorias`).once("value")
     .then(snapshot => {
       let categorias = snapshot.val() || [];
       if (checked && !categorias.includes(categoria)) categorias.push(categoria);
       else if (!checked) categorias = categorias.filter(c => c !== categoria);
-      firebase.database().ref(`promociones/${id}/categorias`).set(categorias);
+      db.ref(`promociones/${id}/categorias`).set(categorias);
     });
 }
 
 function eliminarProductoPromo(id, index) {
-  firebase.database().ref(`promociones/${id}/productos`).once("value")
+  db.ref(`promociones/${id}/productos`).once("value")
     .then(snapshot => {
       const productos = snapshot.val() || [];
       productos.splice(index, 1);
-      firebase.database().ref(`promociones/${id}/productos`).set(productos)
+      db.ref(`promociones/${id}/productos`).set(productos)
         .then(() => mostrarPromociones());
     });
 }
 
 function eliminarPromocion(id) {
-  firebase.database().ref(`promociones/${id}`).remove()
+  db.ref(`promociones/${id}`).remove()
     .then(() => {
       mostrarAlerta("Promoción eliminada.");
       mostrarPromociones();
