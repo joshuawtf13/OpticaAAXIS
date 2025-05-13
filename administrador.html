@@ -598,7 +598,7 @@ function subirACloudinaryProducto(input) {
   const file = input.files[0];
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("upload_preset", "opticaAAXIS");
+  formData.append("upload_preset", "opticaA");
   
   fetch("https://api.cloudinary.com/v1_1/ópticaAAXIS/image/upload", {
     method: "POST",
@@ -616,7 +616,7 @@ function subirACloudinaryPromocion(input) {
   const file = input.files[0];
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("upload_preset", "opticaAAXIS");
+  formData.append("upload_preset", "opticaA");
 
   fetch("https://api.cloudinary.com/v1_1/ópticaAAXIS/image/upload", {
     method: "POST",
