@@ -263,12 +263,123 @@
     }
 
     function mostrarProductos() {
-      // aquí va tu lógica de mostrarProductos (ya incluida antes)
-    }
+  const cont = document.getElementById("listaProductos");
+  cont.innerHTML = "";
+  const categorias = ["caballero", "dama", "niños", "niñas", "accesorios"];
 
-    function mostrarPromociones() {
-      // aquí va tu lógica de mostrarPromociones (ya incluida antes)
-    }
+  categorias.forEach(categoria => {
+    firebase.database().ref(`productos/${categoria}`).once("value")
+      .then(snapshot => {
+        const productos = snapshot.val();
+        if (productos) {
+          Object.entries(productos).forEach(([id, p]) => {
+            const item = document.createElement("div");
+            item.className = "promo-item";
+            item.innerHTML = `
+              <img src="${p.imagen}" class="editar-img">
+              <div class="promo-info">
+                <strong>Categoría:</strong> ${categoria}<br>
+                <input value="${p.descripcion}" onchange="actualizarCampoProducto('${categoria}', '${id}', 'descripcion', this.value)">
+                <input type="number" value="${p.precio}" onchange="actualizarCampoProducto('${categoria}', '${id}', 'precio', this.value)">
+                <button onclick="eliminarProducto('${categoria}', '${id}')">Eliminar</button>
+              </div>
+            `;
+            cont.appendChild(item);
+          });
+        }
+      });
+  });
+}
+
+function actualizarCampoProducto(categoria, id, campo, valor) {
+  firebase.database().ref(`productos/${categoria}/${id}/${campo}`).set(valor)
+    .then(() => mostrarAlerta("Producto actualizado."));
+}
+
+function eliminarProducto(categoria, id) {
+  firebase.database().ref(`productos/${categoria}/${id}`).remove()
+    .then(() => {
+      mostrarAlerta("Producto eliminado.");
+      mostrarProductos();
+    });
+}
+
+function mostrarPromociones() {
+  const cont = document.getElementById("listaPromociones");
+  cont.innerHTML = "";
+
+  firebase.database().ref("promociones").once("value")
+    .then(snapshot => {
+      const promociones = snapshot.val();
+      if (!promociones) {
+        cont.innerHTML = "<p>No hay promociones disponibles.</p>";
+        return;
+      }
+
+      Object.entries(promociones).forEach(([id, promo]) => {
+        const categoriasHTML = ["caballero", "dama", "niños", "niñas", "accesorios"].map(cat => `
+          <label>
+            <input type="checkbox" onchange="editarCategoriaPromo('${id}', '${cat}', this.checked)" ${promo.categorias?.includes(cat) ? "checked" : ""}>
+            ${cat}
+          </label>
+        `).join("");
+
+        const productosHTML = (promo.productos || []).map((p, i) => `
+          <div>
+            ${p.descripcion} (${p.categoria})
+            <button onclick="eliminarProductoPromo('${id}', ${i})">Eliminar</button>
+          </div>
+        `).join("");
+
+        cont.innerHTML += `
+          <div class="promo-item">
+            <img src="${promo.imagen}" class="editar-img">
+            <div class="promo-info">
+              <textarea onchange="actualizarCampoPromocion('${id}', 'descripcion', this.value)">${promo.descripcion}</textarea>
+              <input type="date" value="${promo.vencimiento}" onchange="actualizarCampoPromocion('${id}', 'vencimiento', this.value)">
+              <div><strong>Categorías:</strong><br>${categoriasHTML}</div>
+              <div><strong>Productos:</strong><br>${productosHTML}</div>
+              <button onclick="eliminarPromocion('${id}')">Eliminar promoción</button>
+            </div>
+          </div>
+        `;
+      });
+    });
+}
+
+function actualizarCampoPromocion(id, campo, valor) {
+  firebase.database().ref(`promociones/${id}/${campo}`).set(valor)
+    .then(() => mostrarAlerta("Promoción actualizada."));
+}
+
+function editarCategoriaPromo(id, categoria, checked) {
+  firebase.database().ref(`promociones/${id}/categorias`).once("value")
+    .then(snapshot => {
+      let categorias = snapshot.val() || [];
+      if (checked && !categorias.includes(categoria)) categorias.push(categoria);
+      else if (!checked) categorias = categorias.filter(c => c !== categoria);
+      firebase.database().ref(`promociones/${id}/categorias`).set(categorias);
+    });
+}
+
+function eliminarProductoPromo(id, index) {
+  firebase.database().ref(`promociones/${id}/productos`).once("value")
+    .then(snapshot => {
+      const productos = snapshot.val() || [];
+      productos.splice(index, 1);
+      firebase.database().ref(`promociones/${id}/productos`).set(productos)
+        .then(() => mostrarPromociones());
+    });
+}
+
+function eliminarPromocion(id) {
+  firebase.database().ref(`promociones/${id}`).remove()
+    .then(() => {
+      mostrarAlerta("Promoción eliminada.");
+      mostrarPromociones();
+    });
+}
+
 
     function mostrarAlerta(mensaje) {
       const alerta = document.getElementById("alerta");
