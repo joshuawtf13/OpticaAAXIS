@@ -4,39 +4,86 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Óptica AAXIS</title>
-  <link rel="icon" type="image/png" href="logoOptica.png" />
+  <link rel="icon" href="logoOptica.png" />
   <style>
     body { font-family: sans-serif; margin: 0; background: #f0f0f0; }
-    .productos-container, .carrusel { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
-    .producto-card, .carrusel img {
+    header, nav, footer { background: white; padding: 10px 20px; }
+    nav a {
+      margin: 0 10px; text-decoration: none; color: #333;
+    }
+    nav a:hover { color: #007BFF; }
+
+    .carrusel { display: flex; overflow-x: auto; gap: 10px; padding: 20px; }
+    .carrusel img {
+      height: 300px; border-radius: 10px; flex-shrink: 0;
+    }
+
+    .productos-container {
+      display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;
+      padding: 20px;
+    }
+    .producto-card {
       width: 200px; background: white; border-radius: 8px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1); overflow: hidden;
       text-align: center; transition: transform 0.3s ease;
     }
     .producto-card:hover { transform: scale(1.05); }
-    .producto-card img, .carrusel img { width: 100%; height: 200px; object-fit: cover; }
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-             background: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
-    .modal-contenido { background: white; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; }
-    .cerrar { float: right; cursor: pointer; font-size: 24px; }
+    .producto-card img {
+      width: 100%; height: 200px; object-fit: cover;
+    }
+
+    .modal {
+      display: none; position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%; background: rgba(0,0,0,0.6);
+      justify-content: center; align-items: center;
+    }
+    .modal-contenido {
+      background: white; padding: 20px; border-radius: 10px;
+      width: 90%; max-width: 400px; position: relative;
+    }
+    .cerrar {
+      position: absolute; top: 10px; right: 15px;
+      font-size: 24px; cursor: pointer;
+    }
+
+    footer {
+      text-align: center; font-size: 14px; color: #555;
+      margin-top: 40px;
+    }
+    .footer-info p, .admin-link { margin: 5px 0; }
   </style>
 </head>
 <body>
 
 <header>
-  <h1 style="text-align:center;">Óptica AAXIS</h1>
+  <div class="logo-container">
+    <a href="usuario.html">
+      <img src="logoOptica.png" alt="Logo Óptica AAXIS" style="height: 60px;">
+    </a>
+  </div>
+  <nav>
+
+    <a href="lentes.html">Caballeros</a>
+    <a href="damas.html">Damas</a>
+    <a href="niños.html">Niños</a>
+    <a href="niñas.html">Niñas</a>
+    <a href="accesorios.html">Accesorios</a>
+    <a href="promociones.html">Promociones</a>
+    <a href="nosotros.html">Nosotros</a>
+    <a href="agendaTuCita.html">Agenda Tu Cita</a>
+  </nav>
 </header>
 
 <main>
-  <!-- Carrusel de promociones -->
+  <!-- Carrusel -->
   <section class="carrusel" id="carruselPromos"></section>
 
-  <!-- Productos recientes -->
+  <!-- Productos Nuevos -->
   <h2 style="text-align:center;">Productos Nuevos</h2>
   <section class="productos-container" id="productosRecientes"></section>
 </main>
 
-<!-- Modal -->
+<!-- Modal Detalles -->
 <div id="modal" class="modal" onclick="cerrarModal()">
   <div class="modal-contenido" onclick="event.stopPropagation()">
     <span class="cerrar" onclick="cerrarModal()">&times;</span>
@@ -47,7 +94,20 @@
   </div>
 </div>
 
-<!-- Firebase -->
+<!-- Footer -->
+<footer class="footer">
+  <div class="admin-link">
+    <a href="login.html">Administrador</a>
+  </div>
+  <div class="footer-info">
+    <p><strong>Atención al Cliente:</strong> Lunes a Viernes de 10:00 am - 8:00 pm</p>
+    <p><strong>Sábado:</strong> 11:00 am - 5:00 pm</p>
+    <p>📱 +52 221 582 7775</p>
+    <p>📧 angietrejo1403@gmail.com</p>
+  </div>
+</footer>
+
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
 <script>
@@ -64,7 +124,7 @@
   const db = firebase.database();
 </script>
 
-<!-- Lógica para cargar promociones y productos -->
+<!-- Script Lógica -->
 <script>
   async function cargarPromociones() {
     const carrusel = document.getElementById("carruselPromos");
@@ -129,3 +189,4 @@
 
 </body>
 </html>
+
