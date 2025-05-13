@@ -616,26 +616,49 @@ function subirACloudinaryProducto(input) {
   });
 }
 
-function subirACloudinaryPromocion(input) {
-  const file = input.files[0];
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", "archivoproductos123");
 
-  fetch("https://api.cloudinary.com/v1_1/aaxisopt/image/upload", {
-    method: "POST",
-    body: formData
-  })
-  .then(res => res.json())
-  .then(data => {
-    document.getElementById("urlImagenPromocion").value = data.secure_url;
-    document.getElementById("previewPromocion").src = data.secure_url;
+async function subirACloudinaryProducto(input) {
+  const archivo = input.files[0];
+  const data = new FormData();
+  data.append("file", archivo);
+  data.append("upload_preset", "archivoproductos123"); // Reemplaza esto
+  data.append("cloud_name", "aaxisopt");        // Reemplaza esto
+
+  try {
+    const res = await fetch("https://api.cloudinary.com/v1_1/TU_CLOUD_NAME/image/upload", {
+      method: "POST",
+      body: data
+    });
+    const json = await res.json();
+    document.getElementById("previewProducto").src = json.secure_url;
+    document.getElementById("previewProducto").style.display = "block";
+    document.getElementById("urlImagenProducto").value = json.secure_url;
+    mostrarAlerta("Imagen de producto subida correctamente");
+  } catch (error) {
+    mostrarAlerta("Error al subir imagen de producto");
+  }
+}
+
+async function subirACloudinaryPromocion(input) {
+  const archivo = input.files[0];
+  const data = new FormData();
+  data.append("file", archivo);
+  data.append("upload_preset", "archivoproductos123"); // Reemplaza esto
+  data.append("cloud_name", "aaxisopt");        // Reemplaza esto
+
+  try {
+    const res = await fetch("https://api.cloudinary.com/v1_1/TU_CLOUD_NAME/image/upload", {
+      method: "POST",
+      body: data
+    });
+    const json = await res.json();
+    document.getElementById("previewPromocion").src = json.secure_url;
     document.getElementById("previewPromocion").style.display = "block";
-  })
-  .catch(err => {
-    alert("Error al subir la imagen de la promoción.");
-    console.error(err);
-  });
+    document.getElementById("urlImagenPromocion").value = json.secure_url;
+    mostrarAlerta("Imagen de promoción subida correctamente");
+  } catch (error) {
+    mostrarAlerta("Error al subir imagen de promoción");
+  }
 }
 
 
