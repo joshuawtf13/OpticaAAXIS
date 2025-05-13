@@ -179,402 +179,188 @@
   </main>
   <div id="alerta" class="alerta"></div>  
 <script>
-  let tempProductos = {};
-  let tempPromos = [];
+async function subirImagenCloudinary(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", "archivoproductos123");
 
-  function previsualizarImagen(event, id) {
-    const reader = new FileReader();
-    reader.onload = () => document.getElementById(id).src = reader.result;
-    reader.readAsDataURL(event.target.files[0]);
-  }
-function crearCheckboxesCategorias() {
-  const contenedor = document.getElementById("categoriasCheckboxes");
-  const categorias = ["caballero", "dama", "niños", "niñas", "accesorios"];
-  contenedor.innerHTML = "";
-  categorias.forEach(cat => {
-    contenedor.innerHTML += `
-      <label>
-        <input type="checkbox" name="categoriaPromo" value="${cat}"> ${cat.charAt(0).toUpperCase() + cat.slice(1)}
-      </label>
-    `;
-  });
-}
-
-function crearCheckboxesProductos() {
-  const contenedor = document.getElementById("productosCheckboxes");
-  contenedor.innerHTML = "";
-  const categorias = ["caballero", "dama", "niños", "niñas", "accesorios"];
-
-  categorias.forEach(cat => {
-    const productos = JSON.parse(localStorage.getItem(cat)) || [];
-    if (productos.length === 0) return;
-
-    const productosHTML = productos.map(p => `
-      <label style="display: flex; flex-direction: column; align-items: center; width: 100px;">
-        <input type="checkbox" name="productoPromo" value='${JSON.stringify({ descripcion: p.descripcion, categoria: cat })}'>
-        <img src="${p.imagen}" alt="preview" style="width:60px; height:60px; object-fit:cover; border-radius:6px;">
-        <small>${p.descripcion}</small>
-        <small style="color:gray;">(${cat})</small>
-      </label>
-    `).join("");
-
-    contenedor.innerHTML += `
-      <details style="margin-bottom: 10px;">
-        <summary style="font-weight:bold; cursor:pointer;">${cat.charAt(0).toUpperCase() + cat.slice(1)}</summary>
-        <div style="display:flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
-          ${productosHTML}
-        </div>
-      </details>
-    `;
-  });
-}
-
-
-  function cargarProductosEnSelector() {
-  const selector = document.getElementById("productoRelacionado");
-  selector.innerHTML = "";
-  const categorias = ["caballero", "dama", "niños", "niñas", "accesorios"];
-  categorias.forEach(cat => {
-    const productos = JSON.parse(localStorage.getItem(cat)) || [];
-    productos.forEach(p => {
-      const opt = document.createElement("option");
-      opt.value = JSON.stringify({ descripcion: p.descripcion, categoria: cat });
-      opt.textContent = `${p.descripcion} (${cat})`;
-      selector.appendChild(opt);
+  try {
+    const res = await fetch("https://api.cloudinary.com/v1_1/aaxisopt/image/upload", {
+      method: "POST",
+      body: formData
     });
-  });
+    const data = await res.json();
+    return data.secure_url;
+  } catch (error) {
+    console.error("Error al subir a Cloudinary:", error);
+    return null;
+  }
 }
-
- function subirProducto() {
-  const imagen = document.getElementById("urlImagenProducto").value;
+async function subirProducto() {
   const descripcion = document.getElementById("descripcionProducto").value.trim();
   const precio = document.getElementById("precioProducto").value.trim();
   const categoria = document.getElementById("categoriaProducto").value;
+  const inputImagen = document.getElementById("fileProducto");
 
-  if (!imagen || !descripcion || !precio || !categoria) {
-    alert("Faltan campos o imagen inválida");
+  if (!descripcion || !precio || !categoria || !inputImagen.files[0]) {
+    alert("Faltan campos obligatorios");
     return;
   }
 
-  let productos = JSON.parse(localStorage.getItem(categoria)) || [];
-  if (productos.length >= 200) {
-    alert("Límite de 200 productos alcanzado en esta categoría.");
-    return;
-  }
+  const imagenURL = await subirImagenCloudinary(inputImagen.files[0]);
+  if (!imagenURL) return;
 
-  const nuevo = { imagen, descripcion, precio, categoria };
-  productos.push(nuevo);
-  localStorage.setItem(categoria, JSON.stringify(productos));
-
-  let todos = JSON.parse(localStorage.getItem("productosTodos")) || [];
-  todos.push(nuevo);
-  localStorage.setItem("productosTodos", JSON.stringify(todos));
+  const producto = { descripcion, precio, categoria, imagen: imagenURL };
+  await firebase.database().ref(`productos/${categoria}`).push(producto);
 
   mostrarAlerta("Producto guardado correctamente.");
+  limpiarFormularioProducto();
   mostrarProductos();
-  cargarProductosEnSelector();
-  crearCheckboxesProductos();
 }
-
-
-  }
-
-  function mostrarProductos() {
-    const cont = document.getElementById("listaProductos");
-    cont.innerHTML = "";
-    const categorias = ["caballero", "dama", "niños", "niñas", "accesorios"];
-    tempProductos = {};
-
-    categorias.forEach(cat => {
-      const productos = JSON.parse(localStorage.getItem(cat)) || [];
-      tempProductos[cat] = [...productos];
-
-      productos.forEach((p, i) => {
-        cont.innerHTML += `
-          <div class="promo-item">
-            <img src="${p.imagen}" class="editar-img" id="img-${cat}-${i}">
-            <div class="input-file-wrapper">
-  <span class="input-file-button">Cambiar imagen</span>
-  <input type="file" onchange="actualizarImagenProducto('${cat}', ${i}, this)">
-</div>
-
-            <div class="promo-info">
-              <strong>Categoría:</strong> ${cat}
-              <input value="${p.descripcion}" onchange="editarProducto('${cat}', ${i}, 'descripcion', this.value)">
-              <input type="number" value="${p.precio}" onchange="editarProducto('${cat}', ${i}, 'precio', this.value)">
-              <button onclick="guardarProducto('${cat}', ${i})">Actualizar</button>
-              <button onclick="eliminarProducto('${cat}', ${i})">Eliminar</button>
-            </div>
-          </div>`;
-      });
-    });
-  }
-
-  function editarProducto(cat, index, campo, valor) {
-    if (!tempProductos[cat]) {
-      tempProductos[cat] = JSON.parse(localStorage.getItem(cat)) || [];
-    }
-    tempProductos[cat][index][campo] = valor;
-  }
-
-  function actualizarImagenProducto(cat, index, input) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      document.getElementById(`img-${cat}-${index}`).src = reader.result;
-      editarProducto(cat, index, "imagen", reader.result);
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-
-  function guardarProducto(cat, index) {
-    localStorage.setItem(cat, JSON.stringify(tempProductos[cat]));
-    mostrarAlerta("Producto actualizado.");
-mostrarProductos();
-
-
-  }
-
-  function eliminarProducto(cat, index) {
-    const productos = JSON.parse(localStorage.getItem(cat)) || [];
-    productos.splice(index, 1);
-    localStorage.setItem(cat, JSON.stringify(productos));
-
-    let todos = JSON.parse(localStorage.getItem("productosTodos")) || [];
-    todos = todos.filter(p => p.categoria !== cat || p.descripcion !== tempProductos[cat][index].descripcion);
-    localStorage.setItem("productosTodos", JSON.stringify(todos));
-
- mostrarAlerta("Producto eliminado.");
-mostrarProductos();
-cargarProductosEnSelector();
-
-    
-
-  }
-
-  function subirPromocion() {
-  const imagen = document.getElementById("urlImagenPromocion").value;
+async function subirPromocion() {
   const descripcion = document.getElementById("descripcionPromocion").value.trim();
   const vencimiento = document.getElementById("vencimientoPromocion").value;
-
+  const inputImagen = document.getElementById("filePromocion");
   const categorias = Array.from(document.querySelectorAll("input[name='categoriaPromo']:checked")).map(c => c.value);
   const productos = Array.from(document.querySelectorAll("input[name='productoPromo']:checked")).map(p => JSON.parse(p.value));
 
-  if (!imagen || !descripcion || !vencimiento) {
-    alert("Faltan campos o imagen inválida");
+  if (!descripcion || !vencimiento || !inputImagen.files[0]) {
+    alert("Faltan campos");
     return;
   }
 
-  const promociones = JSON.parse(localStorage.getItem("promociones")) || [];
-  promociones.push({ imagen, descripcion, categorias, productos, vencimiento });
-  localStorage.setItem("promociones", JSON.stringify(promociones));
+  const imagenURL = await subirImagenCloudinary(inputImagen.files[0]);
+  if (!imagenURL) return;
 
-  mostrarPromociones();
+  const promo = { descripcion, vencimiento, imagen: imagenURL, categorias, productos };
+  await firebase.database().ref("promociones").push(promo);
+
   mostrarAlerta("Promoción guardada correctamente.");
+  limpiarFormularioPromocion();
+  mostrarPromociones();
+}
+function mostrarProductos() {
+  const cont = document.getElementById("listaProductos");
+  cont.innerHTML = "";
+  const categorias = ["caballero", "dama", "niños", "niñas", "accesorios"];
+
+  categorias.forEach(categoria => {
+    firebase.database().ref(`productos/${categoria}`).once("value")
+      .then(snapshot => {
+        const productos = snapshot.val();
+        if (productos) {
+          Object.entries(productos).forEach(([id, p]) => {
+            const item = document.createElement("div");
+            item.className = "promo-item";
+            item.innerHTML = `
+              <img src="${p.imagen}" class="editar-img">
+              <div class="promo-info">
+                <strong>Categoría:</strong> ${categoria}<br>
+                <input value="${p.descripcion}" onchange="actualizarCampoProducto('${categoria}', '${id}', 'descripcion', this.value)">
+                <input type="number" value="${p.precio}" onchange="actualizarCampoProducto('${categoria}', '${id}', 'precio', this.value)">
+                <button onclick="eliminarProducto('${categoria}', '${id}')">Eliminar</button>
+              </div>
+            `;
+            cont.appendChild(item);
+          });
+        }
+      });
+  });
+}
+function actualizarCampoProducto(categoria, id, campo, valor) {
+  firebase.database().ref(`productos/${categoria}/${id}/${campo}`).set(valor)
+    .then(() => mostrarAlerta("Producto actualizado."));
 }
 
-
-
-
-  function mostrarPromociones() {
+function eliminarProducto(categoria, id) {
+  firebase.database().ref(`productos/${categoria}/${id}`).remove()
+    .then(() => {
+      mostrarAlerta("Producto eliminado.");
+      mostrarProductos();
+    });
+}
+function mostrarPromociones() {
   const cont = document.getElementById("listaPromociones");
   cont.innerHTML = "";
-  const promociones = JSON.parse(localStorage.getItem("promociones")) || [];
-  tempPromos = [...promociones];
 
-  promociones.forEach((p, i) => {
-    const idAcordeon = `acordeon-${i}`;
-    let acordeonesHTML = "";
-    const categorias = ["caballero", "dama", "niños", "niñas", "accesorios"];
+  firebase.database().ref("promociones").once("value")
+    .then(snapshot => {
+      const promociones = snapshot.val();
+      if (!promociones) {
+        cont.innerHTML = "<p>No hay promociones disponibles.</p>";
+        return;
+      }
 
-    categorias.forEach(cat => {
-      const productos = JSON.parse(localStorage.getItem(cat)) || [];
-      if (productos.length === 0) return;
-
-      const productosHTML = productos.map((prod, j) => {
-        const isChecked = p.productos?.some(pp => pp.descripcion === prod.descripcion && pp.categoria === cat);
-        return `
-          <label style="display:flex;flex-direction:column;align-items:center;width:100px;">
-            <input type="checkbox" onchange="toggleProductoPromo(${i}, '${cat}', '${prod.descripcion}', this.checked)" ${isChecked ? "checked" : ""}>
-            <img src="${prod.imagen}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;">
-            <small>${prod.descripcion}</small>
-            <small style="color:gray;">(${cat})</small>
+      Object.entries(promociones).forEach(([id, promo]) => {
+        const categoriasHTML = ["caballero", "dama", "niños", "niñas", "accesorios"].map(cat => `
+          <label>
+            <input type="checkbox" onchange="editarCategoriaPromo('${id}', '${cat}', this.checked)" ${promo.categorias?.includes(cat) ? "checked" : ""}>
+            ${cat}
           </label>
+        `).join("");
+
+        const productosHTML = (promo.productos || []).map((p, i) => `
+          <div>
+            ${p.descripcion} (${p.categoria})
+            <button onclick="eliminarProductoPromo('${id}', ${i})">Eliminar</button>
+          </div>
+        `).join("");
+
+        cont.innerHTML += `
+          <div class="promo-item">
+            <img src="${promo.imagen}" class="editar-img">
+            <div class="promo-info">
+              <textarea onchange="actualizarCampoPromocion('${id}', 'descripcion', this.value)">${promo.descripcion}</textarea>
+              <input type="date" value="${promo.vencimiento}" onchange="actualizarCampoPromocion('${id}', 'vencimiento', this.value)">
+              <div><strong>Categorías:</strong><br>${categoriasHTML}</div>
+              <div><strong>Productos:</strong><br>${productosHTML}</div>
+              <button onclick="eliminarPromocion('${id}')">Eliminar promoción</button>
+            </div>
+          </div>
         `;
-      }).join("");
-
-      acordeonesHTML += `
-        <details>
-          <summary><strong>${cat.charAt(0).toUpperCase() + cat.slice(1)}</strong></summary>
-          <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;">${productosHTML}</div>
-        </details>
-      `;
+      });
     });
-
-    cont.innerHTML += `
-      <div class="promo-item">
-        <img src="${p.imagen}" class="editar-img" id="promo-img-${i}">
-        <div class="input-file-wrapper">
-  <span class="input-file-button">Cambiar imagen</span>
-  <input type="file" onchange="actualizarImagenPromo(${i}, this)">
-</div>
-
-        <div class="promo-info">
-          <textarea onchange="editarPromo(${i}, 'descripcion', this.value)">${p.descripcion}</textarea>
-          <input type="date" value="${p.vencimiento || ''}" onchange="editarPromo(${i}, 'vencimiento', this.value)">
-          <div><strong>Categorías:</strong></div>
-<div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
-  ${["caballero", "dama", "niños", "niñas", "accesorios"].map(cat => `
-    <label>
-      <input type="checkbox" onchange="toggleCategoriaPromo(${i}, '${cat}', this.checked)" 
-        ${p.categorias?.includes(cat) ? "checked" : ""}>
-      ${cat.charAt(0).toUpperCase() + cat.slice(1)}
-    </label>
-  `).join("")}
-</div>
-
-          <div><strong>Editar productos relacionados:</strong></div>
-          ${acordeonesHTML}
-          <button onclick="guardarPromo(${i})">Actualizar</button>
-          <button onclick="eliminarPromo(${i})">Eliminar</button>
-        </div>
-      </div>`;
-  });
+}
+function actualizarCampoPromocion(id, campo, valor) {
+  firebase.database().ref(`promociones/${id}/${campo}`).set(valor)
+    .then(() => mostrarAlerta("Promoción actualizada."));
 }
 
-
-function generarEdicionCategoriasPromocion(seleccionadas, promoIndex) {
-  const categorias = ["caballero", "dama", "niños", "niñas", "accesorios"];
-  return categorias.map(cat => `
-    <label style="margin-right: 10px;">
-      <input type="checkbox" onchange="actualizarCategoriasPromo(${promoIndex})"
-        ${seleccionadas.includes(cat) ? "checked" : ""} value="${cat}"> ${cat}
-    </label>
-  `).join("");
-}
-
-function generarEdicionProductosPromocion(seleccionados, promoIndex) {
-  const categorias = ["caballero", "dama", "niños", "niñas", "accesorios"];
-  const seleccionadosStr = seleccionados.map(p => JSON.stringify(p));
-  let html = "";
-
-  categorias.forEach(cat => {
-    const productos = JSON.parse(localStorage.getItem(cat)) || [];
-    productos.forEach(prod => {
-      const value = JSON.stringify({ descripcion: prod.descripcion, categoria: cat });
-      const checked = seleccionadosStr.includes(value);
-      html += `
-        <label style="display:inline-block; text-align:center; margin:5px;">
-          <input type="checkbox" value='${value}' onchange="actualizarProductosPromo(${promoIndex})"
-            ${checked ? "checked" : ""}>
-          <img src="${prod.imagen}" style="width:50px;height:50px;object-fit:cover;border-radius:5px;"><br>
-          <small>${prod.descripcion}</small><br>
-          <small style="color:gray;">(${cat})</small>
-        </label>
-      `;
+function editarCategoriaPromo(id, categoria, checked) {
+  firebase.database().ref(`promociones/${id}/categorias`).once("value")
+    .then(snapshot => {
+      let categorias = snapshot.val() || [];
+      if (checked && !categorias.includes(categoria)) categorias.push(categoria);
+      else if (!checked) categorias = categorias.filter(c => c !== categoria);
+      firebase.database().ref(`promociones/${id}/categorias`).set(categorias);
     });
-  });
-
-  return html || "<p style='color:gray;'>No hay productos disponibles</p>";
 }
 
-// Actualiza categorías seleccionadas desde los checkboxes
-function actualizarCategoriasPromo(index) {
-  const checkboxes = document.querySelectorAll(`.promo-info:nth-child(${index + 1}) input[type="checkbox"][value]`);
-  const seleccionadas = Array.from(checkboxes)
-    .filter(cb => cb.checked && cb.value && !cb.value.includes("{"))
-    .map(cb => cb.value);
-  tempPromos[index].categorias = seleccionadas;
+function eliminarProductoPromo(id, index) {
+  firebase.database().ref(`promociones/${id}/productos`).once("value")
+    .then(snapshot => {
+      const productos = snapshot.val() || [];
+      productos.splice(index, 1);
+      firebase.database().ref(`promociones/${id}/productos`).set(productos)
+        .then(() => mostrarPromociones());
+    });
 }
 
-// Actualiza productos seleccionados desde los checkboxes
-function actualizarProductosPromo(index) {
-  const checkboxes = document.querySelectorAll(`.promo-info:nth-child(${index + 1}) input[type="checkbox"][value]`);
-  const seleccionados = Array.from(checkboxes)
-    .filter(cb => cb.checked && cb.value.includes("{"))
-    .map(cb => JSON.parse(cb.value));
-  tempPromos[index].productos = seleccionados;
+function eliminarPromocion(id) {
+  firebase.database().ref(`promociones/${id}`).remove()
+    .then(() => {
+      mostrarAlerta("Promoción eliminada.");
+      mostrarPromociones();
+    });
 }
-
-
-// Función auxiliar para recuperar la imagen del producto según su categoría y descripción
-function obtenerImagenProducto(descripcion, categoria) {
-  const productos = JSON.parse(localStorage.getItem(categoria)) || [];
-  const prod = productos.find(p => p.descripcion === descripcion);
-  return prod ? prod.imagen : "https://via.placeholder.com/50x50?text=Sin+img";
-}
-
-
-  function editarPromo(index, campo, valor) {
-    tempPromos[index][campo] = valor;
-  }
-  function toggleCategoriaPromo(index, categoria, checked) {
-  if (!tempPromos[index].categorias) tempPromos[index].categorias = [];
-  const idx = tempPromos[index].categorias.indexOf(categoria);
-  if (checked && idx === -1) {
-    tempPromos[index].categorias.push(categoria);
-  } else if (!checked && idx !== -1) {
-    tempPromos[index].categorias.splice(idx, 1);
-  }
-}
-
-function toggleProductoPromo(index, categoria, descripcion, checked) {
-  if (!tempPromos[index].productos) tempPromos[index].productos = [];
-  const existe = tempPromos[index].productos.find(p => p.descripcion === descripcion && p.categoria === categoria);
-
-  if (checked && !existe) {
-    tempPromos[index].productos.push({ descripcion, categoria });
-  } else if (!checked && existe) {
-    tempPromos[index].productos = tempPromos[index].productos.filter(p => !(p.descripcion === descripcion && p.categoria === categoria));
-  }
-}
-
-
-  function actualizarImagenPromo(index, input) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      document.getElementById(`promo-img-${index}`).src = reader.result;
-      editarPromo(index, "imagen", reader.result);
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-
-  function guardarPromo(index) {
-    localStorage.setItem("promociones", JSON.stringify(tempPromos));
-    mostrarPromociones();
-    mostrarAlerta("Promoción actualizada.");
-
-  }
-
-  function eliminarPromo(index) {
-    const promociones = JSON.parse(localStorage.getItem("promociones")) || [];
-    promociones.splice(index, 1);
-    localStorage.setItem("promociones", JSON.stringify(promociones));
-    mostrarPromociones();
-    mostrarAlerta("Promoción eliminada.");
-
-  }
-
-  window.onload = () => {
-  mostrarProductos();
-  mostrarPromociones();
-  crearCheckboxesCategorias();
-  crearCheckboxesProductos();
-  bloquearFechasPasadas(); 
-};
-
 function mostrarAlerta(mensaje) {
   const alerta = document.getElementById("alerta");
   alerta.textContent = mensaje;
   alerta.style.display = "block";
-  setTimeout(() => {
-    alerta.style.display = "none";
-  }, 3000);
+  setTimeout(() => alerta.style.display = "none", 3000);
 }
-
-
 function limpiarFormularioProducto() {
   document.getElementById("fileProducto").value = "";
-  document.getElementById("previewProducto").src = "";
   document.getElementById("descripcionProducto").value = "";
   document.getElementById("precioProducto").value = "";
   document.getElementById("categoriaProducto").selectedIndex = 0;
@@ -582,86 +368,33 @@ function limpiarFormularioProducto() {
 
 function limpiarFormularioPromocion() {
   document.getElementById("filePromocion").value = "";
-  document.getElementById("previewPromocion").src = "";
   document.getElementById("descripcionPromocion").value = "";
   document.getElementById("vencimientoPromocion").value = "";
-
   document.querySelectorAll("input[name='categoriaPromo']").forEach(cb => cb.checked = false);
   document.querySelectorAll("input[name='productoPromo']").forEach(cb => cb.checked = false);
 }
-// Bloquear fechas pasadas en el input de vencimiento
-function bloquearFechasPasadas() {
-  const hoy = new Date().toISOString().split("T")[0]; // yyyy-mm-dd
-  document.getElementById("vencimientoPromocion").setAttribute("min", hoy);
-}
-function subirACloudinaryProducto(input) {
-  const file = input.files[0];
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", "archivoproductos123");
-
-  fetch("https://api.cloudinary.com/v1_1/aaxisopt/image/upload", {
-    method: "POST",
-    body: formData
-  })
-  .then(res => res.json())
-  .then(data => {
-    document.getElementById("urlImagenProducto").value = data.secure_url;
-    document.getElementById("previewProducto").src = data.secure_url;
-    document.getElementById("previewProducto").style.display = "block";
-  })
-  .catch(err => {
-    alert("Error al subir la imagen del producto.");
-    console.error(err);
-  });
-}
-
-
-async function subirACloudinaryProducto(input) {
-  const archivo = input.files[0];
-  const data = new FormData();
-  data.append("file", archivo);
-  data.append("upload_preset", "archivoproductos123"); // Reemplaza esto
-  data.append("cloud_name", "aaxisopt");        // Reemplaza esto
-
-  try {
-    const res = await fetch("https://api.cloudinary.com/v1_1/TU_CLOUD_NAME/image/upload", {
-      method: "POST",
-      body: data
-    });
-    const json = await res.json();
-    document.getElementById("previewProducto").src = json.secure_url;
-    document.getElementById("previewProducto").style.display = "block";
-    document.getElementById("urlImagenProducto").value = json.secure_url;
-    mostrarAlerta("Imagen de producto subida correctamente");
-  } catch (error) {
-    mostrarAlerta("Error al subir imagen de producto");
-  }
-}
-
-async function subirACloudinaryPromocion(input) {
-  const archivo = input.files[0];
-  const data = new FormData();
-  data.append("file", archivo);
-  data.append("upload_preset", "archivoproductos123"); // Reemplaza esto
-  data.append("cloud_name", "aaxisopt");        // Reemplaza esto
-
-  try {
-    const res = await fetch("https://api.cloudinary.com/v1_1/TU_CLOUD_NAME/image/upload", {
-      method: "POST",
-      body: data
-    });
-    const json = await res.json();
-    document.getElementById("previewPromocion").src = json.secure_url;
-    document.getElementById("previewPromocion").style.display = "block";
-    document.getElementById("urlImagenPromocion").value = json.secure_url;
-    mostrarAlerta("Imagen de promoción subida correctamente");
-  } catch (error) {
-    mostrarAlerta("Error al subir imagen de promoción");
-  }
-}
-
 
 </script>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
+<script>
+  // Inicializa Firebase
+ 
+const firebaseConfig = {
+  apiKey: "AIzaSyB11z4COh5adtBgNqar2Gx4JtLfIMB-KIg",
+  authDomain: "optica-aaxis.firebaseapp.com",
+  databaseURL: "https://optica-aaxis-default-rtdb.firebaseio.com",
+  projectId: "optica-aaxis",
+  storageBucket: "optica-aaxis.firebasestorage.app",
+  messagingSenderId: "796057879313",
+  appId: "1:796057879313:web:872dc9b3ce45f0172b82b0",
+  measurementId: "G-N3QXM6VMB2"
+};
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+</script>
+
 </body>
 </html>
