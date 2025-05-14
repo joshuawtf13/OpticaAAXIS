@@ -204,12 +204,13 @@
               div.className = "promo-item";
               div.innerHTML = `
                 <img src="${p.imagen}" class="editar-img" onclick="actualizarImagen('producto', '${cat}', '${id}')">
-<button onclick="actualizarTodoProducto('${cat}', '${id}')">Actualizar Todo</button>
+
 
                 <div class="promo-info">
                   <input value="${p.descripcion}" onchange="actualizarCampoProducto('${cat}', '${id}', 'descripcion', this.value)">
                   <input value="${p.precio}" onchange="actualizarCampoProducto('${cat}', '${id}', 'precio', this.value)">
                   <button onclick="eliminarProducto('${cat}', '${id}')">Eliminar</button>
+                  <button onclick="actualizarTodoProducto('${cat}', '${id}')">Actualizar Todo</button>
                 </div>
               `;
               cont.appendChild(div);
