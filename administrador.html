@@ -283,24 +283,33 @@ function generarCheckboxProductos() {
 
   categorias.forEach(cat => {
     const catContainer = document.createElement("details");
-    catContainer.innerHTML = `<summary>${cat.toUpperCase()}</summary>`;
+    catContainer.innerHTML = `<summary><strong>${cat.toUpperCase()}</strong></summary>`;
+    catContainer.style.marginBottom = "10px";
+
     db.ref(`productos/${cat}`).once("value").then(snapshot => {
       const productos = snapshot.val();
       if (productos) {
         Object.entries(productos).forEach(([id, prod]) => {
-          const label = document.createElement("label");
-          label.style.display = "block";
-          label.innerHTML = `
+          const item = document.createElement("label");
+          item.style.display = "flex";
+          item.style.alignItems = "center";
+          item.style.margin = "5px 0";
+          item.style.gap = "10px";
+
+          item.innerHTML = `
             <input type="checkbox" name="productoRelacionado" value="${id}" data-categoria="${cat}" data-descripcion="${prod.descripcion}">
-            ${prod.descripcion}
+            <img src="${prod.imagen}" alt="img" style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px;">
+            <span>${prod.descripcion}</span>
           `;
-          catContainer.appendChild(label);
+          catContainer.appendChild(item);
         });
       }
     });
+
     contenedor.appendChild(catContainer);
   });
 }
+
 
     function actualizarCampoProducto(cat, id, campo, valor) {
       db.ref(`productos/${cat}/${id}/${campo}`).set(valor);
