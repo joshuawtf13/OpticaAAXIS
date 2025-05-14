@@ -15,25 +15,26 @@
     }
     nav a:hover { color: #007BFF; }
 
-    .carrusel-container {
-  overflow-x: auto;
-  padding: 20px 0;
+  .carrusel-container {
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  margin: 20px auto;
+  position: relative;
 }
 
 .carrusel {
   display: flex;
-  gap: 15px;
-  padding: 0 20px;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
+  transition: transform 1s ease-in-out;
+  width: max-content;
 }
 
 .carrusel img {
   height: 300px;
-  flex-shrink: 0;
-  border-radius: 10px;
-  scroll-snap-align: center;
+  width: 100vw;
   object-fit: cover;
+  border-radius: 10px;
+  flex-shrink: 0;
 }
 
 
@@ -150,19 +151,27 @@
 <!-- Script Lógica -->
 <script>
   async function cargarPromociones() {
-    const carrusel = document.getElementById("carruselPromos");
-    carrusel.innerHTML = "";
-    const snapshot = await db.ref("promociones").once("value");
-    const promos = snapshot.val();
-    if (!promos) return;
+  const carrusel = document.getElementById("carruselPromos");
+  carrusel.innerHTML = "";
+  const snapshot = await db.ref("promociones").once("value");
+  const promos = snapshot.val();
+  if (!promos) return;
 
-    Object.values(promos).forEach(promo => {
-      const img = document.createElement("img");
-      img.src = promo.imagen;
-      img.alt = promo.descripcion;
-      carrusel.appendChild(img);
-    });
-  }
+  const lista = Object.values(promos);
+  lista.forEach(promo => {
+    const img = document.createElement("img");
+    img.src = promo.imagen;
+    img.alt = promo.descripcion;
+    carrusel.appendChild(img);
+  });
+
+  let index = 0;
+  setInterval(() => {
+    index = (index + 1) % lista.length;
+    carrusel.style.transform = `translateX(-${index * 100}vw)`;
+  }, 10000); // cada 10 segundos
+}
+
 
   async function cargarProductos() {
     const contenedor = document.getElementById("productosRecientes");
