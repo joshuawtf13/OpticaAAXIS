@@ -6,97 +6,39 @@
   <title>Panel de Administración - Óptica ITP</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    .admin-container {
-      max-width: 960px;
-      margin: auto;
-      padding: 20px;
-    }
+    body { font-family: sans-serif; background: #f4f4f4; margin: 0; }
+    .admin-container { max-width: 960px; margin: auto; padding: 20px; }
     .formulario, .promo-list {
-      background: #fff;
-      margin-top: 20px;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      background: #fff; margin-top: 20px; padding: 20px;
+      border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     .preview-image, .editar-img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 8px;
+      width: 100px; height: 100px; object-fit: cover; border-radius: 8px;
     }
-    .promo-item {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-    .promo-info {
-      flex: 1;
-    }
+    .promo-item { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+    .promo-info { flex: 1; }
     .promo-info input, .promo-info select, .promo-info textarea {
-      width: 100%;
-      margin: 5px 0;
-      padding: 6px;
+      width: 100%; margin: 5px 0; padding: 6px;
     }
     button {
-      margin: 4px 4px 0 0;
-      padding: 6px 12px;
-      background: #87CEEB;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+      margin: 4px 4px 0 0; padding: 6px 12px; background: #87CEEB;
+      color: white; border: none; border-radius: 5px; cursor: pointer;
     }
-    button:hover {
-      background: #4682B4;
-    }
+    button:hover { background: #4682B4; }
     .alerta {
-      background-color: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-      padding: 10px 20px;
-      border-radius: 5px;
-      margin: 10px auto;
-      font-weight: bold;
-      display: none;
-      text-align: center;
-      width: fit-content;
-      max-width: 90%;
+      background-color: #d4edda; color: #155724;
+      border: 1px solid #c3e6cb; padding: 10px 20px;
+      border-radius: 5px; margin: 10px auto; font-weight: bold;
+      display: none; text-align: center;
+      width: fit-content; max-width: 90%;
       animation: fadeInOut 3s ease-in-out;
+      position: fixed; top: 20px; left: 50%;
+      transform: translateX(-50%); box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       z-index: 9999;
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     @keyframes fadeInOut {
-      0% { opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { opacity: 0; }
-    }
-    .input-file-wrapper {
-      position: relative;
-      display: inline-block;
-    }
-    .input-file-wrapper input[type="file"] {
-      opacity: 0;
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
-    }
-    .input-file-button {
-      background: #f0f0f0;
-      border: 1px solid #ccc;
-      padding: 4px 10px;
-      border-radius: 5px;
-      font-size: 12px;
-      cursor: pointer;
-      display: inline-block;
+      0% { opacity: 0; } 10% { opacity: 1; }
+      90% { opacity: 1; } 100% { opacity: 0; }
     }
   </style>
 </head>
@@ -109,10 +51,9 @@
 
   <main>
     <section class="admin-container">
-
       <h2>Gestión de Contenido</h2>
 
-      <!-- SUBIR PRODUCTO -->
+      <!-- Formulario Productos -->
       <div class="formulario">
         <h3>Subir Producto</h3>
         <input type="file" id="fileProducto" accept="image/*" onchange="subirACloudinaryProducto(this)">
@@ -131,37 +72,32 @@
         <button onclick="limpiarFormularioProducto()">Limpiar</button>
       </div>
 
-      <!-- SUBIR PROMOCIÓN -->
+      <!-- Formulario Promociones -->
       <div class="formulario">
         <h3>Subir Promoción</h3>
         <input type="file" id="filePromocion" accept="image/*" onchange="subirACloudinaryPromocion(this)">
         <img id="previewPromocion" class="preview-image" style="display:none;">
         <input type="hidden" id="urlImagenPromocion">
         <textarea id="descripcionPromocion" placeholder="Descripción de la promoción"></textarea>
-        <label><strong>Categorías (opcional)</strong></label>
-        <div id="categoriasCheckboxes" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
-          <!-- Puedes generar dinámicamente los checkboxes si lo deseas -->
-          <label><input type="checkbox" name="categoriaPromo" value="caballero"> Caballero</label>
-          <label><input type="checkbox" name="categoriaPromo" value="dama"> Dama</label>
-          <label><input type="checkbox" name="categoriaPromo" value="niños"> Niños</label>
-          <label><input type="checkbox" name="categoriaPromo" value="niñas"> Niñas</label>
-          <label><input type="checkbox" name="categoriaPromo" value="accesorios"> Accesorios</label>
-        </div>
-        <label><strong>Productos relacionados (opcional)</strong></label>
-        <div id="productosCheckboxes"></div>
+        <label><strong>Categorías:</strong></label><br>
+        <label><input type="checkbox" name="categoriaPromo" value="caballero"> Caballero</label>
+        <label><input type="checkbox" name="categoriaPromo" value="dama"> Dama</label>
+        <label><input type="checkbox" name="categoriaPromo" value="niños"> Niños</label>
+        <label><input type="checkbox" name="categoriaPromo" value="niñas"> Niñas</label>
+        <label><input type="checkbox" name="categoriaPromo" value="accesorios"> Accesorios</label>
+        <br>
         <label>Fecha de vencimiento</label>
         <input type="date" id="vencimientoPromocion">
         <button onclick="subirPromocion()">Guardar Promoción</button>
         <button onclick="limpiarFormularioPromocion()">Limpiar</button>
       </div>
 
-      <!-- PRODUCTOS REGISTRADOS -->
+      <!-- Listas -->
       <div class="formulario promo-list">
         <h3>Productos registrados</h3>
         <div id="listaProductos"></div>
       </div>
 
-      <!-- PROMOCIONES REGISTRADAS -->
       <div class="formulario promo-list">
         <h3>Promociones registradas</h3>
         <div id="listaPromociones"></div>
@@ -172,7 +108,7 @@
 
   <div id="alerta" class="alerta"></div>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
   <script>
@@ -186,8 +122,7 @@
       appId: "1:796057879313:web:872dc9b3ce45f0172b82b0"
     };
     const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
+    const db = firebase.database();
   </script>
 
   <script>
@@ -195,17 +130,12 @@ const db = firebase.database();
       const formData = new FormData();
       formData.append("file", file);
       formData.append("upload_preset", "archivoproductos123");
-      try {
-        const res = await fetch("https://api.cloudinary.com/v1_1/aaxisopt/image/upload", {
-          method: "POST",
-          body: formData
-        });
-        const data = await res.json();
-        return data.secure_url;
-      } catch (error) {
-        console.error("Error al subir a Cloudinary:", error);
-        return null;
-      }
+      const res = await fetch("https://api.cloudinary.com/v1_1/aaxisopt/image/upload", {
+        method: "POST",
+        body: formData
+      });
+      const data = await res.json();
+      return data.secure_url;
     }
 
     async function subirACloudinaryProducto(input) {
@@ -231,182 +161,100 @@ const db = firebase.database();
       const precio = document.getElementById("precioProducto").value.trim();
       const categoria = document.getElementById("categoriaProducto").value;
       const imagenURL = document.getElementById("urlImagenProducto").value;
+      if (!descripcion || !precio || !imagenURL) return alert("Completa todos los campos");
 
-      if (!descripcion || !precio || !categoria || !imagenURL) {
-        alert("Faltan campos obligatorios");
-        return;
-      }
-
-      const producto = {
-  descripcion,
-  precio: Number(precio),
-  categoria,
-  imagen: imagenURL
-};
-
-      console.log({ descripcion, precio, categoria, imagenURL });
-
-      console.log("Guardando producto:", producto);
-db.ref(`productos/${categoria}`).push(producto)
-  .then(() => {
-    mostrarAlerta("Producto guardado correctamente.");
-    limpiarFormularioProducto();
-    mostrarProductos();
-  })
-  .catch(error => {
-    console.error("Error guardando en Firebase:", error);
-    mostrarAlerta("Error al guardar el producto.");
-  });
+      const producto = { descripcion, precio: Number(precio), categoria, imagen: imagenURL };
+      await db.ref(`productos/${categoria}`).push(producto);
+      mostrarAlerta("Producto guardado");
+      limpiarFormularioProducto();
+      mostrarProductos();
     }
 
     async function subirPromocion() {
       const descripcion = document.getElementById("descripcionPromocion").value.trim();
       const vencimiento = document.getElementById("vencimientoPromocion").value;
-      const imagenURL = document.getElementById("urlImagenPromocion").value;
+      const imagen = document.getElementById("urlImagenPromocion").value;
       const categorias = Array.from(document.querySelectorAll("input[name='categoriaPromo']:checked")).map(c => c.value);
-      const productos = []; // puedes llenar dinámicamente si deseas
+      if (!descripcion || !vencimiento || !imagen) return alert("Faltan campos");
 
-      if (!descripcion || !vencimiento || !imagenURL) {
-        alert("Faltan campos");
-        return;
-      }
-
-      const promo = { descripcion, vencimiento, imagen: imagenURL, categorias, productos };
-      console.log("Guardando promoción:", promo);
-db.ref("promociones").push(promo)
-  .then(() => {
-    mostrarAlerta("Promoción guardada correctamente.");
-    limpiarFormularioPromocion();
-    mostrarPromociones();
-  })
-  .catch(error => {
-    console.error("Error guardando la promoción:", error);
-    mostrarAlerta("Error al guardar la promoción.");
-  });
-
+      const promo = { descripcion, vencimiento, imagen, categorias, productos: [] };
+      await db.ref("promociones").push(promo);
+      mostrarAlerta("Promoción guardada");
+      limpiarFormularioPromocion();
+      mostrarPromociones();
+    }
 
     function mostrarProductos() {
-  const cont = document.getElementById("listaProductos");
-  cont.innerHTML = "";
-  const categorias = ["caballero", "dama", "niños", "niñas", "accesorios"];
+      const cont = document.getElementById("listaProductos");
+      cont.innerHTML = "";
+      ["caballero", "dama", "niños", "niñas", "accesorios"].forEach(cat => {
+        db.ref(`productos/${cat}`).once("value").then(snap => {
+          const productos = snap.val();
+          if (productos) {
+            Object.entries(productos).forEach(([id, p]) => {
+              const div = document.createElement("div");
+              div.className = "promo-item";
+              div.innerHTML = `
+                <img src="${p.imagen}" class="editar-img">
+                <div class="promo-info">
+                  <input value="${p.descripcion}" onchange="actualizarCampoProducto('${cat}', '${id}', 'descripcion', this.value)">
+                  <input value="${p.precio}" onchange="actualizarCampoProducto('${cat}', '${id}', 'precio', this.value)">
+                  <button onclick="eliminarProducto('${cat}', '${id}')">Eliminar</button>
+                </div>
+              `;
+              cont.appendChild(div);
+            });
+          }
+        });
+      });
+    }
 
-  categorias.forEach(categoria => {
-    db.ref(`productos/${categoria}`).once("value")
-      .then(snapshot => {
-        const productos = snapshot.val();
-        if (productos) {
-          Object.entries(productos).forEach(([id, p]) => {
-            const item = document.createElement("div");
-            item.className = "promo-item";
-            item.innerHTML = `
-              <img src="${p.imagen}" class="editar-img">
+    function mostrarPromociones() {
+      const cont = document.getElementById("listaPromociones");
+      cont.innerHTML = "";
+      db.ref("promociones").once("value").then(snap => {
+        const promos = snap.val();
+        if (promos) {
+          Object.entries(promos).forEach(([id, promo]) => {
+            const div = document.createElement("div");
+            div.className = "promo-item";
+            div.innerHTML = `
+              <img src="${promo.imagen}" class="editar-img">
               <div class="promo-info">
-                <strong>Categoría:</strong> ${categoria}<br>
-                <input value="${p.descripcion}" onchange="actualizarCampoProducto('${categoria}', '${id}', 'descripcion', this.value)">
-                <input type="number" value="${p.precio}" onchange="actualizarCampoProducto('${categoria}', '${id}', 'precio', this.value)">
-                <button onclick="eliminarProducto('${categoria}', '${id}')">Eliminar</button>
+                <textarea onchange="actualizarCampoPromocion('${id}', 'descripcion', this.value)">${promo.descripcion}</textarea>
+                <input type="date" value="${promo.vencimiento}" onchange="actualizarCampoPromocion('${id}', 'vencimiento', this.value)">
+                <button onclick="eliminarPromocion('${id}')">Eliminar</button>
               </div>
             `;
-            cont.appendChild(item);
+            cont.appendChild(div);
           });
         }
       });
-  });
-}
+    }
 
-function actualizarCampoProducto(categoria, id, campo, valor) {
-  db.ref(`productos/${categoria}/${id}/${campo}`).set(valor)
-    .then(() => mostrarAlerta("Producto actualizado."));
-}
+    function actualizarCampoProducto(cat, id, campo, valor) {
+      db.ref(`productos/${cat}/${id}/${campo}`).set(valor);
+      mostrarAlerta("Producto actualizado");
+    }
 
-function eliminarProducto(categoria, id) {
-  db.ref(`productos/${categoria}/${id}`).remove()
-    .then(() => {
-      mostrarAlerta("Producto eliminado.");
-      mostrarProductos();
-    });
-}
+    function actualizarCampoPromocion(id, campo, valor) {
+      db.ref(`promociones/${id}/${campo}`).set(valor);
+      mostrarAlerta("Promoción actualizada");
+    }
 
-function mostrarPromociones() {
-  const cont = document.getElementById("listaPromociones");
-  cont.innerHTML = "";
+    function eliminarProducto(cat, id) {
+      db.ref(`productos/${cat}/${id}`).remove().then(mostrarProductos);
+      mostrarAlerta("Producto eliminado");
+    }
 
-  db.ref("promociones").once("value")
-    .then(snapshot => {
-      const promociones = snapshot.val();
-      if (!promociones) {
-        cont.innerHTML = "<p>No hay promociones disponibles.</p>";
-        return;
-      }
+    function eliminarPromocion(id) {
+      db.ref(`promociones/${id}`).remove().then(mostrarPromociones);
+      mostrarAlerta("Promoción eliminada");
+    }
 
-      Object.entries(promociones).forEach(([id, promo]) => {
-        const categoriasHTML = ["caballero", "dama", "niños", "niñas", "accesorios"].map(cat => `
-          <label>
-            <input type="checkbox" onchange="editarCategoriaPromo('${id}', '${cat}', this.checked)" ${promo.categorias?.includes(cat) ? "checked" : ""}>
-            ${cat}
-          </label>
-        `).join("");
-
-        const productosHTML = (promo.productos || []).map((p, i) => `
-          <div>
-            ${p.descripcion} (${p.categoria})
-            <button onclick="eliminarProductoPromo('${id}', ${i})">Eliminar</button>
-          </div>
-        `).join("");
-
-        cont.innerHTML += `
-          <div class="promo-item">
-            <img src="${promo.imagen}" class="editar-img">
-            <div class="promo-info">
-              <textarea onchange="actualizarCampoPromocion('${id}', 'descripcion', this.value)">${promo.descripcion}</textarea>
-              <input type="date" value="${promo.vencimiento}" onchange="actualizarCampoPromocion('${id}', 'vencimiento', this.value)">
-              <div><strong>Categorías:</strong><br>${categoriasHTML}</div>
-              <div><strong>Productos:</strong><br>${productosHTML}</div>
-              <button onclick="eliminarPromocion('${id}')">Eliminar promoción</button>
-            </div>
-          </div>
-        `;
-      });
-    });
-}
-
-function actualizarCampoPromocion(id, campo, valor) {
-  db.ref(`promociones/${id}/${campo}`).set(valor)
-    .then(() => mostrarAlerta("Promoción actualizada."));
-}
-
-function editarCategoriaPromo(id, categoria, checked) {
-  db.ref(`promociones/${id}/categorias`).once("value")
-    .then(snapshot => {
-      let categorias = snapshot.val() || [];
-      if (checked && !categorias.includes(categoria)) categorias.push(categoria);
-      else if (!checked) categorias = categorias.filter(c => c !== categoria);
-      db.ref(`promociones/${id}/categorias`).set(categorias);
-    });
-}
-
-function eliminarProductoPromo(id, index) {
-  db.ref(`promociones/${id}/productos`).once("value")
-    .then(snapshot => {
-      const productos = snapshot.val() || [];
-      productos.splice(index, 1);
-      db.ref(`promociones/${id}/productos`).set(productos)
-        .then(() => mostrarPromociones());
-    });
-}
-
-function eliminarPromocion(id) {
-  db.ref(`promociones/${id}`).remove()
-    .then(() => {
-      mostrarAlerta("Promoción eliminada.");
-      mostrarPromociones();
-    });
-}
-
-
-    function mostrarAlerta(mensaje) {
+    function mostrarAlerta(msg) {
       const alerta = document.getElementById("alerta");
-      alerta.textContent = mensaje;
+      alerta.textContent = msg;
       alerta.style.display = "block";
       setTimeout(() => alerta.style.display = "none", 3000);
     }
@@ -416,16 +264,16 @@ function eliminarPromocion(id) {
       document.getElementById("descripcionProducto").value = "";
       document.getElementById("precioProducto").value = "";
       document.getElementById("categoriaProducto").selectedIndex = 0;
-      document.getElementById("previewProducto").style.display = "none";
       document.getElementById("urlImagenProducto").value = "";
+      document.getElementById("previewProducto").style.display = "none";
     }
 
     function limpiarFormularioPromocion() {
       document.getElementById("filePromocion").value = "";
       document.getElementById("descripcionPromocion").value = "";
       document.getElementById("vencimientoPromocion").value = "";
-      document.getElementById("previewPromocion").style.display = "none";
       document.getElementById("urlImagenPromocion").value = "";
+      document.getElementById("previewPromocion").style.display = "none";
       document.querySelectorAll("input[name='categoriaPromo']").forEach(cb => cb.checked = false);
     }
 
@@ -436,3 +284,4 @@ function eliminarPromocion(id) {
   </script>
 </body>
 </html>
+
