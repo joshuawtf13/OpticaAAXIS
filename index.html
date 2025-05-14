@@ -15,10 +15,27 @@
     }
     nav a:hover { color: #007BFF; }
 
-    .carrusel { display: flex; overflow-x: auto; gap: 10px; padding: 20px; }
-    .carrusel img {
-      height: 300px; border-radius: 10px; flex-shrink: 0;
-    }
+    .carrusel-container {
+  overflow-x: auto;
+  padding: 20px 0;
+}
+
+.carrusel {
+  display: flex;
+  gap: 15px;
+  padding: 0 20px;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+}
+
+.carrusel img {
+  height: 300px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  scroll-snap-align: center;
+  object-fit: cover;
+}
+
 
     .productos-container {
       display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;
