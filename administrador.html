@@ -257,7 +257,7 @@ db.ref(`productos/${categoria}`).push(producto)
     console.error("Error guardando en Firebase:", error);
     mostrarAlerta("Error al guardar el producto.");
   });
-
+    }
 
     async function subirPromocion() {
       const descripcion = document.getElementById("descripcionPromocion").value.trim();
