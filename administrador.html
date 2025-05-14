@@ -40,6 +40,23 @@
       0% { opacity: 0; } 10% { opacity: 1; }
       90% { opacity: 1; } 100% { opacity: 0; }
     }
+     .checkbox-categorias {
+      display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0;
+    }
+    .checkbox-categorias label {
+      display: flex; align-items: center; gap: 5px;
+      background: #eee; padding: 5px 10px; border-radius: 5px;
+    }
+    #productosCheckboxes details {
+      margin-bottom: 10px;
+    }
+    #productosCheckboxes label {
+      display: flex; align-items: center; gap: 10px;
+      padding: 4px; border-radius: 5px;
+    }
+    #productosCheckboxes img {
+      width: 40px; height: 40px; object-fit: cover; border-radius: 4px;
+    }
   </style>
 </head>
 <body>
@@ -74,25 +91,25 @@
 
       <!-- Formulario Promociones -->
       <div class="formulario">
-        <h3>Subir Promoción</h3>
-        <input type="file" id="filePromocion" accept="image/*" onchange="subirACloudinaryPromocion(this)">
-        <img id="previewPromocion" class="preview-image" style="display:none;">
-        <input type="hidden" id="urlImagenPromocion">
-        <textarea id="descripcionPromocion" placeholder="Descripción de la promoción"></textarea>
-        <label><strong>Categorías:</strong></label><br>
+      <h3>Subir Promoción</h3>
+      <input type="file" id="filePromocion" accept="image/*" onchange="subirACloudinaryPromocion(this)">
+      <img id="previewPromocion" class="preview-image" style="display:none;">
+      <input type="hidden" id="urlImagenPromocion">
+      <textarea id="descripcionPromocion" placeholder="Descripción de la promoción"></textarea>
+      <label><strong>Categorías:</strong></label>
+      <div class="checkbox-categorias">
         <label><input type="checkbox" name="categoriaPromo" value="caballero"> Caballero</label>
         <label><input type="checkbox" name="categoriaPromo" value="dama"> Dama</label>
         <label><input type="checkbox" name="categoriaPromo" value="niños"> Niños</label>
         <label><input type="checkbox" name="categoriaPromo" value="niñas"> Niñas</label>
         <label><input type="checkbox" name="categoriaPromo" value="accesorios"> Accesorios</label>
-        <br>
-        <label>Fecha de vencimiento</label>
-        <input type="date" id="vencimientoPromocion" min="">
-        <div id="productosCheckboxes" style="margin-top: 10px;"></div>
-
-        <button onclick="subirPromocion()">Guardar Promoción</button>
-        <button onclick="limpiarFormularioPromocion()">Limpiar</button>
       </div>
+      <label>Fecha de vencimiento</label>
+      <input type="date" id="vencimientoPromocion" min="">
+      <div id="productosCheckboxes" style="margin-top: 10px;"></div>
+      <button onclick="subirPromocion()">Guardar Promoción</button>
+      <button onclick="limpiarFormularioPromocion()">Limpiar</button>
+    </div>
 
       <!-- Listas -->
       <div class="formulario promo-list">
