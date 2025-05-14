@@ -57,22 +57,24 @@
     #productosCheckboxes img {
       width: 40px; height: 40px; object-fit: cover; border-radius: 4px;
     }
-    .producto-relacionado {
-  display: inline-block;
-  width: 120px;
-  margin: 10px;
-  text-align: center;
-}
-.producto-relacionado img {
-  width: 100%;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 6px;
-  display: block;
-}
-.producto-relacionado input[type="checkbox"] {
-  margin-top: 5px;
-}
+   producto-relacionado {
+      display: inline-block;
+      width: 120px;
+      margin: 10px;
+      text-align: center;
+      vertical-align: top;
+    }
+    .producto-relacionado img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 6px;
+      display: block;
+      margin: auto;
+    }
+    .producto-relacionado input[type="checkbox"] {
+      margin-top: 6px;
+    }
 
   </style>
 </head>
@@ -365,58 +367,63 @@ function abrirEdicionProductos(idPromo) {
   contenedor.innerHTML = `<h4>Selecciona productos relacionados:</h4>`;
   const categorias = ["caballero", "dama", "niños", "niñas", "accesorios"];
 
-  categorias.forEach(cat => {
-    const details = document.createElement("details");
-    details.innerHTML = `<summary>${cat.toUpperCase()}</summary>`;
-    details.style.marginBottom = "10px";
+  db.ref(`promociones/${idPromo}`).once("value").then(promoSnap => {
+    const promoActual = promoSnap.val();
+    const productosSeleccionados = promoActual.productos?.map(p => p.id) || [];
 
-    db.ref(`productos/${cat}`).once("value").then(snapshot => {
-      const productos = snapshot.val();
-      if (productos) {
-        Object.entries(productos).forEach(([id, p]) => {
-          const div = document.createElement("div");
-          div.className = "producto-relacionado";
-          div.innerHTML = `
-            <img src="${p.imagen}" alt="${p.descripcion}">
-            <div>${p.descripcion}</div>
-            <input type="checkbox" name="productoEditar" value="${id}" data-categoria="${cat}" data-descripcion="${p.descripcion}">
-          `;
-          details.appendChild(div);
-        });
-      }
+    categorias.forEach(cat => {
+      const details = document.createElement("details");
+      details.innerHTML = `<summary>${cat.toUpperCase()}</summary>`;
+      details.style.marginBottom = "10px";
+
+      db.ref(`productos/${cat}`).once("value").then(snapshot => {
+        const productos = snapshot.val();
+        if (productos) {
+          Object.entries(productos).forEach(([id, p]) => {
+            const div = document.createElement("div");
+            div.className = "producto-relacionado";
+            const checked = productosSeleccionados.includes(id) ? "checked" : "";
+            div.innerHTML = `
+              <img src="${p.imagen}" alt="${p.descripcion}">
+              <div>${p.descripcion}</div>
+              <input type="checkbox" name="productoEditar" value="${id}" data-categoria="${cat}" data-descripcion="${p.descripcion}" ${checked}>
+            `;
+            details.appendChild(div);
+          });
+        }
+      });
+
+      contenedor.appendChild(details);
     });
 
-    contenedor.appendChild(details);
+    const guardarBtn = document.createElement("button");
+    guardarBtn.textContent = "Guardar productos relacionados";
+    guardarBtn.onclick = () => {
+      const seleccionados = Array.from(contenedor.querySelectorAll("input[name='productoEditar']:checked")).map(cb => ({
+        id: cb.value,
+        descripcion: cb.getAttribute("data-descripcion"),
+        categoria: cb.getAttribute("data-categoria")
+      }));
+      db.ref(`promociones/${idPromo}/productos`).set(seleccionados).then(() => {
+        mostrarPromociones();
+        mostrarAlerta("Productos relacionados actualizados");
+      });
+    };
+
+    contenedor.appendChild(guardarBtn);
+    const modal = document.createElement("div");
+    modal.style = "position:fixed;top:0;left:0;width:100%;height:100%;background:#000a;display:flex;justify-content:center;align-items:center;z-index:9999;";
+    const box = document.createElement("div");
+    box.style = "background:white;padding:20px;border-radius:10px;max-height:90%;overflow:auto;";
+    const cerrar = document.createElement("button");
+    cerrar.textContent = "Cerrar";
+    cerrar.onclick = () => modal.remove();
+    box.appendChild(cerrar);
+    box.appendChild(contenedor);
+    modal.appendChild(box);
+    document.body.appendChild(modal);
   });
-
-  const guardarBtn = document.createElement("button");
-  guardarBtn.textContent = "Guardar productos relacionados";
-  guardarBtn.onclick = () => {
-    const seleccionados = Array.from(contenedor.querySelectorAll("input[name='productoEditar']:checked")).map(cb => ({
-      id: cb.value,
-      descripcion: cb.getAttribute("data-descripcion"),
-      categoria: cb.getAttribute("data-categoria")
-    }));
-    db.ref(`promociones/${idPromo}/productos`).set(seleccionados).then(() => {
-      mostrarPromociones();
-      mostrarAlerta("Productos relacionados actualizados");
-    });
-  };
-
-  contenedor.appendChild(guardarBtn);
-  const modal = document.createElement("div");
-  modal.style = "position:fixed;top:0;left:0;width:100%;height:100%;background:#000a;display:flex;justify-content:center;align-items:center;z-index:9999;";
-  const box = document.createElement("div");
-  box.style = "background:white;padding:20px;border-radius:10px;max-height:90%;overflow:auto;";
-  const cerrar = document.createElement("button");
-  cerrar.textContent = "Cerrar";
-  cerrar.onclick = () => modal.remove();
-  box.appendChild(cerrar);
-  box.appendChild(contenedor);
-  modal.appendChild(box);
-  document.body.appendChild(modal);
 }
-
 
 
     function limpiarFormularioPromocion() {
