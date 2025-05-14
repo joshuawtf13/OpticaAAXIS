@@ -57,11 +57,13 @@
     #productosCheckboxes img {
       width: 40px; height: 40px; object-fit: cover; border-radius: 4px;
     }
- .producto-relacionado {
-  display: inline-block;
-  width: 120px;
-  text-align: center;
+.producto-relacionado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 140px;
   margin: 10px;
+  text-align: center;
 }
 .producto-relacionado img {
   width: 100px;
@@ -69,10 +71,14 @@
   object-fit: cover;
   border-radius: 8px;
 }
-.producto-relacionado label {
-  display: block;
+.producto-relacionado .descripcion {
+  margin: 5px 0;
+  font-size: 14px;
+}
+.producto-relacionado input[type="checkbox"] {
   margin-top: 5px;
 }
+
 
 
   </style>
@@ -314,12 +320,11 @@ function generarCheckboxProductos() {
           const div = document.createElement("div");
           div.className = "producto-relacionado";
           div.innerHTML = `
-            <img src="${prod.imagen}" alt="${prod.descripcion}">
-            <label>
-              <input type="checkbox" name="productoRelacionado" value="${id}" data-categoria="${cat}" data-descripcion="${prod.descripcion}">
-              ${prod.descripcion}
-            </label>
-          `;
+  <img src="${prod.imagen}" alt="${prod.descripcion}">
+  <div class="descripcion">${prod.descripcion}</div>
+  <input type="checkbox" name="productoRelacionado" value="${id}" data-categoria="${cat}" data-descripcion="${prod.descripcion}">
+`;
+
           categoriaContenedor.appendChild(div);
         });
       }
