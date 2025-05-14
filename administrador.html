@@ -186,7 +186,7 @@
       appId: "1:796057879313:web:872dc9b3ce45f0172b82b0"
     };
     const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.database("https://optica-aaxis-default-rtdb.firebaseio.com/");
+const db = firebase.database();
 
   </script>
 
@@ -246,11 +246,18 @@ const db = firebase.database("https://optica-aaxis-default-rtdb.firebaseio.com/"
 
       console.log({ descripcion, precio, categoria, imagenURL });
 
-      await db.ref(`productos/${categoria}`).push(producto);
-      mostrarAlerta("Producto guardado correctamente.");
-      limpiarFormularioProducto();
-      mostrarProductos();
-    }
+      console.log("Guardando producto:", producto);
+db.ref(`productos/${categoria}`).push(producto)
+  .then(() => {
+    mostrarAlerta("Producto guardado correctamente.");
+    limpiarFormularioProducto();
+    mostrarProductos();
+  })
+  .catch(error => {
+    console.error("Error guardando en Firebase:", error);
+    mostrarAlerta("Error al guardar el producto.");
+  });
+
 
     async function subirPromocion() {
       const descripcion = document.getElementById("descripcionPromocion").value.trim();
@@ -265,11 +272,18 @@ const db = firebase.database("https://optica-aaxis-default-rtdb.firebaseio.com/"
       }
 
       const promo = { descripcion, vencimiento, imagen: imagenURL, categorias, productos };
-      await db.ref("promociones").push(promo);
-      mostrarAlerta("Promoción guardada correctamente.");
-      limpiarFormularioPromocion();
-      mostrarPromociones();
-    }
+      console.log("Guardando promoción:", promo);
+db.ref("promociones").push(promo)
+  .then(() => {
+    mostrarAlerta("Promoción guardada correctamente.");
+    limpiarFormularioPromocion();
+    mostrarPromociones();
+  })
+  .catch(error => {
+    console.error("Error guardando la promoción:", error);
+    mostrarAlerta("Error al guardar la promoción.");
+  });
+
 
     function mostrarProductos() {
   const cont = document.getElementById("listaProductos");
