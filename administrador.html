@@ -88,6 +88,7 @@
         <br>
         <label>Fecha de vencimiento</label>
         <input type="date" id="vencimientoPromocion" min="">
+        <div id="productosCheckboxes" style="margin-top: 10px;"></div>
 
         <button onclick="subirPromocion()">Guardar Promoción</button>
         <button onclick="limpiarFormularioPromocion()">Limpiar</button>
@@ -203,7 +204,9 @@
               const div = document.createElement("div");
               div.className = "promo-item";
               div.innerHTML = `
-                <img src="${p.imagen}" class="editar-img" onclick="actualizarImagen('producto', '${cat}', '${id}')">
+                <img src="${p.imagen}" class="editar-img">
+<br><button onclick="actualizarImagen('producto', '${cat}', '${id}')">Cambiar Imagen</button>
+
 
 
                 <div class="promo-info">
@@ -238,10 +241,13 @@ function actualizarTodoProducto(cat, id) {
             const div = document.createElement("div");
             div.className = "promo-item";
             div.innerHTML = `
-  <img src="${promo.imagen}" class="editar-img" onclick="actualizarImagen('promocion', null, '${id}')">
+  <img src="${promo.imagen}" class="editar-img">
+<br><button onclick="actualizarImagen('promocion', null, '${id}')">Cambiar Imagen</button>
+
   <div class="promo-info">
     <textarea onchange="actualizarCampoPromocion('${id}', 'descripcion', this.value)">${promo.descripcion}</textarea>
-    <input type="date" value="${promo.vencimiento}" onchange="actualizarCampoPromocion('${id}', 'vencimiento', this.value)">
+    <input type="date" value="${promo.vencimiento}" min="${new Date().toISOString().split('T')[0]}" onchange="actualizarCampoPromocion('${id}', 'vencimiento', this.value)">
+
     <div><strong>Productos relacionados:</strong> ${promo.productos?.map(p => `<div>${p.descripcion} (${p.categoria})</div>`).join("") || "Ninguno"}</div>
     <button onclick="abrirEdicionProductos('${id}')">Editar productos relacionados</button>
     <button onclick="eliminarPromocion('${id}')">Eliminar</button>
@@ -315,35 +321,58 @@ function generarCheckboxProductos() {
       document.getElementById("previewProducto").style.display = "none";
     }
 function abrirEdicionProductos(idPromo) {
-  const nuevos = prompt("Escribe los IDs separados por comas (consulta en consola o usa interfaz más amigable)");
-  if (!nuevos) return;
-  const ids = nuevos.split(",").map(id => id.trim());
-
-  const productos = [];
+  const contenedor = document.createElement("div");
+  contenedor.innerHTML = `<h4>Selecciona productos relacionados:</h4>`;
   const categorias = ["caballero", "dama", "niños", "niñas", "accesorios"];
-  let consultas = 0;
 
   categorias.forEach(cat => {
+    const details = document.createElement("details");
+    details.innerHTML = `<summary>${cat.toUpperCase()}</summary>`;
     db.ref(`productos/${cat}`).once("value").then(snapshot => {
-      const data = snapshot.val();
-      if (data) {
-        Object.entries(data).forEach(([id, p]) => {
-          if (ids.includes(id)) {
-            productos.push({ id, descripcion: p.descripcion, categoria: cat });
-          }
+      const productos = snapshot.val();
+      if (productos) {
+        Object.entries(productos).forEach(([id, p]) => {
+          const label = document.createElement("label");
+          label.style.display = "block";
+          label.innerHTML = `
+            <input type="checkbox" name="productoEditar" value="${id}" data-categoria="${cat}" data-descripcion="${p.descripcion}">
+            ${p.descripcion}
+          `;
+          details.appendChild(label);
         });
       }
-      consultas++;
-      if (consultas === categorias.length) {
-        db.ref(`promociones/${idPromo}/productos`).set(productos)
-          .then(() => {
-            mostrarPromociones();
-            mostrarAlerta("Productos actualizados");
-          });
-      }
     });
+    contenedor.appendChild(details);
   });
+
+  const guardarBtn = document.createElement("button");
+  guardarBtn.textContent = "Guardar productos relacionados";
+  guardarBtn.onclick = () => {
+    const seleccionados = Array.from(contenedor.querySelectorAll("input[name='productoEditar']:checked")).map(cb => ({
+      id: cb.value,
+      descripcion: cb.getAttribute("data-descripcion"),
+      categoria: cb.getAttribute("data-categoria")
+    }));
+    db.ref(`promociones/${idPromo}/productos`).set(seleccionados).then(() => {
+      mostrarPromociones();
+      mostrarAlerta("Productos relacionados actualizados");
+    });
+  };
+
+  contenedor.appendChild(guardarBtn);
+  const modal = document.createElement("div");
+  modal.style = "position:fixed;top:0;left:0;width:100%;height:100%;background:#000a;display:flex;justify-content:center;align-items:center;z-index:9999;";
+  const box = document.createElement("div");
+  box.style = "background:white;padding:20px;border-radius:10px;max-height:90%;overflow:auto;";
+  const cerrar = document.createElement("button");
+  cerrar.textContent = "Cerrar";
+  cerrar.onclick = () => modal.remove();
+  box.appendChild(cerrar);
+  box.appendChild(contenedor);
+  modal.appendChild(box);
+  document.body.appendChild(modal);
 }
+
 
     function limpiarFormularioPromocion() {
       document.getElementById("filePromocion").value = "";
