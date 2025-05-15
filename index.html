@@ -57,6 +57,10 @@
       background: white; padding: 20px; border-radius: 10px;
       width: 90%; max-width: 400px; position: relative;
     }
+        .modal-contenido img { width: 100%; height: 250px; object-fit: cover; border-radius: 8px; }
+    .modal-detalles p { margin: 10px 0; }
+    .modal-navegacion { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+
     .cerrar {
       position: absolute; top: 10px; right: 15px;
       font-size: 24px; cursor: pointer;
@@ -106,10 +110,17 @@
 <div id="modal" class="modal" onclick="cerrarModal()">
   <div class="modal-contenido" onclick="event.stopPropagation()">
     <span class="cerrar" onclick="cerrarModal()">&times;</span>
-    <img id="modal-img" style="width:100%; height: 250px; object-fit:cover;" />
-    <p id="modal-descripcion"></p>
-    <p id="modal-precio"></p>
-    <p id="modal-categoria"></p>
+    <img id="modal-img" />
+    <div class="modal-detalles">
+      <p id="modal-descripcion"></p>
+      <p id="modal-precio"></p>
+      <p id="modal-categoria"></p>
+      <a id="modal-link" href="#" style="color: #007BFF; display: block; margin: 10px 0;">Ver más en esta categoría</a>
+    </div>
+    <div class="modal-navegacion">
+      <button onclick="navegarProducto(-1)">&#8592;</button>
+      <button onclick="navegarProducto(1)">&#8594;</button>
+    </div>
   </div>
 </div>
 
@@ -169,7 +180,7 @@
 }
 
 
-  async function cargarProductos() {
+   async function cargarProductos() {
     const contenedor = document.getElementById("productosRecientes");
     contenedor.innerHTML = "";
     const categorias = ["caballero", "dama", "niños", "niñas", "accesorios"];
@@ -183,7 +194,10 @@
       }
     }
 
-    todos.reverse().slice(0, 15).forEach(producto => {
+    todos = todos.reverse().slice(0, 15);
+    productosGlobal = todos;
+
+    todos.forEach(producto => {
       const card = document.createElement("div");
       card.className = "producto-card";
       card.innerHTML = `
@@ -197,14 +211,20 @@
     });
   }
 
+
   function mostrarModal(producto) {
     document.getElementById("modal-img").src = producto.imagen;
     document.getElementById("modal-descripcion").textContent = `Descripción: ${producto.descripcion}`;
     document.getElementById("modal-precio").textContent = `Precio: $${producto.precio}`;
     document.getElementById("modal-categoria").textContent = `Categoría: ${producto.categoria}`;
+    document.getElementById("modal-link").href = `${producto.categoria}.html`;
     document.getElementById("modal").style.display = "flex";
+    indexProducto = productosGlobal.findIndex(p => p.descripcion === producto.descripcion && p.categoria === producto.categoria);
   }
-
+function navegarProducto(direccion) {
+    indexProducto = (indexProducto + direccion + productosGlobal.length) % productosGlobal.length;
+    mostrarModal(productosGlobal[indexProducto]);
+  }
   function cerrarModal() {
     document.getElementById("modal").style.display = "none";
   }
