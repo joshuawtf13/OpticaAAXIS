@@ -176,6 +176,7 @@
     };
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    </script>
   <script>
     let productos = [];
 let indiceActual = 0;
@@ -248,12 +249,7 @@ async function cargarProductos() {
     }
 
     window.onload = cargarProductos;
-    window.addEventListener("storage", function(event) {
-  if (event.key && event.key.startsWith("actualizar_")) {
-    const categoria = event.key.replace("actualizar_", "");
-    if (categoria === "ninos") cargarProductos(); // o la función de recarga correspondiente
-  }
-});
+    
 
   </script>
 </head>
