@@ -323,9 +323,7 @@ function actualizarTodoProducto(cat, id) {
                 <input type="checkbox" name="cat_${id}" value="${cat}" ${checked}> ${cat.charAt(0).toUpperCase() + cat.slice(1)}
               </label>`;
     }).join("")}
-  </div>
-  <button style="margin-top: 5px;" onclick="actualizarCategoriaPromocion('${id}')">Actualizar Categorías</button>
-</div>
+  
 
 
     <div><strong>Productos relacionados:</strong> ${promo.productos?.map(p => `<div>${p.descripcion} (${p.categoria})</div>`).join("") || "Ninguno"}</div>
