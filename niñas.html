@@ -37,13 +37,12 @@
     }
 
     nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  justify-content: flex-end;
-  padding-right: 200px; /* Espacio a la derecha */
-}
-
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: flex-end;
+      padding-right: 200px;
+    }
 
     nav a {
       text-decoration: none;
@@ -53,7 +52,7 @@
     }
 
     main {
-      padding-top: 100px; /* Espacio para header fijo */
+      padding-top: 100px;
     }
     .producto {
       transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -159,41 +158,55 @@
       right: 10px;
     }
   </style>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
   <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB11z4COh5adtBgNqar2Gx4JtLfIMB-KIg",
+      authDomain: "optica-aaxis.firebaseapp.com",
+      databaseURL: "https://optica-aaxis-default-rtdb.firebaseio.com",
+      projectId: "optica-aaxis",
+      storageBucket: "optica-aaxis.appspot.com",
+      messagingSenderId: "796057879313",
+      appId: "1:796057879313:web:872dc9b3ce45f0172b82b0"
+    };
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     let productos = [];
-let indiceActual = 0;
+    let indiceActual = 0;
 
-function cargarProductos() {
-  const contenedor = document.getElementById("productos");
-  contenedor.innerHTML = "";
-  
-  const categoria = "niñas"; 
-  productos = JSON.parse(localStorage.getItem(categoria)) || [];
+    async function cargarProductos() {
+      const contenedor = document.getElementById("productos");
+      contenedor.innerHTML = "";
 
-  const resaltar = new URLSearchParams(window.location.search).get("resaltar");
+      const snapshot = await db.ref("productos/niñas").once("value");
+      const data = snapshot.val();
+      if (!data) return;
 
-  productos.forEach((producto, index) => {
-    const item = document.createElement("div");
-    item.className = "producto";
+      productos = Object.values(data);
 
-    // Resaltar si coincide con la URL
-    if (resaltar === producto.descripcion) {
-      item.style.border = "3px solid blue";
+      const resaltar = new URLSearchParams(window.location.search).get("resaltar");
 
-      setTimeout(() => {
-        item.style.border = ""; // Quitar el borde después de 20 segundos
-      }, 20000);
+      productos.forEach((producto, index) => {
+        const item = document.createElement("div");
+        item.className = "producto";
+
+        if (resaltar === producto.descripcion) {
+          item.style.border = "3px solid blue";
+          setTimeout(() => item.style.border = "", 20000);
+        }
+
+        item.innerHTML = `
+          <img src="${producto.imagen}" alt="Producto" width="150" height="150">
+          <p><strong>Precio:</strong> $${producto.precio}</p>
+          <p><strong>Descripción:</strong> ${producto.descripcion}</p>
+        `;
+        item.onclick = () => mostrarModal(index);
+        contenedor.appendChild(item);
+      });
     }
 
-    item.innerHTML = `
-      <img src="${producto.imagen}" alt="Producto" width="150" height="150">
-      <p><strong>Precio:</strong> $${producto.precio}</p>
-      <p><strong>Descripción:</strong> ${producto.descripcion}</p>
-    `;
-    item.onclick = () => mostrarModal(index);
-    contenedor.appendChild(item);
-  });
-}
     function mostrarModal(indice) {
       indiceActual = indice;
       const producto = productos[indice];
@@ -266,7 +279,6 @@ function cargarProductos() {
       <p><strong></strong> Sabado de 11:00 am - 5:00 pm</p>
       <p><strong><i class="fab fa-whatsapp"></i> :</strong> +52 221 582 7775</p>
       <p><strong><i class="fab fa-google"></i> :</strong> angietrejo1403@gmail.com</p>
-   
     </div>
   </footer>
 </body>
