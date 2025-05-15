@@ -314,13 +314,17 @@ function actualizarTodoProducto(cat, id) {
     <input type="date" value="${promo.vencimiento}" min="${new Date().toISOString().split('T')[0]}" onchange="actualizarCampoPromocion('${id}', 'vencimiento', this.value)">
     
     <div><strong>Categorías:</strong><br>
-      ${["caballero", "dama", "niños", "niñas", "accesorios"].map(cat => {
-        const checked = promo.categorias?.includes(cat) ? "checked" : "";
-        return `<label style="margin-right: 10px;">
-                  <input type="checkbox" onchange="actualizarCategoriaPromocion('${id}')" name="cat_${id}" value="${cat}" ${checked}> ${cat.charAt(0).toUpperCase() + cat.slice(1)}
-                </label>`;
-      }).join("")}
-    </div>
+  <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px;">
+    ${["caballero", "dama", "niños", "niñas", "accesorios"].map(cat => {
+      const checked = promo.categorias?.includes(cat) ? "checked" : "";
+      return `<label style="display: flex; align-items: center; gap: 4px;">
+                <input type="checkbox" name="cat_${id}" value="${cat}" ${checked}> ${cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </label>`;
+    }).join("")}
+  </div>
+  <button style="margin-top: 5px;" onclick="actualizarCategoriaPromocion('${id}')">Actualizar Categorías</button>
+</div>
+
 
     <div><strong>Productos relacionados:</strong> ${promo.productos?.map(p => `<div>${p.descripcion} (${p.categoria})</div>`).join("") || "Ninguno"}</div>
     <button onclick="abrirEdicionProductos('${id}')">Editar productos relacionados</button>
@@ -492,6 +496,7 @@ function abrirEdicionProductos(idPromo) {
     mostrarAlerta("Categorías actualizadas");
   });
 }
+
 
 function actualizarImagen(tipo, categoria, id) {
   const input = document.createElement("input");
