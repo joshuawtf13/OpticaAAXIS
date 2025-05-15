@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Promociones - Óptica ITP</title>
   <link rel="icon" type="image/png" href="logoOptica.png" />
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -170,15 +172,35 @@
     }
   </style>
   <script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyB11z4COh5adtBgNqar2Gx4JtLfIMB-KIg",
+    authDomain: "optica-aaxis.firebaseapp.com",
+    databaseURL: "https://optica-aaxis-default-rtdb.firebaseio.com",
+    projectId: "optica-aaxis",
+    storageBucket: "optica-aaxis.appspot.com",
+    messagingSenderId: "796057879313",
+    appId: "1:796057879313:web:872dc9b3ce45f0172b82b0"
+  };
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+</script>
+
+  <script>
   let promociones = [], indiceActual = 0;
 
-  document.addEventListener("DOMContentLoaded", function () {
-    promociones = JSON.parse(localStorage.getItem("promociones")) || [];
+  async function cargarPromociones() {
     const contenedor = document.getElementById("promociones");
-    if (promociones.length === 0) {
+    contenedor.innerHTML = "";
+
+    const snapshot = await db.ref("promociones").once("value");
+    const data = snapshot.val();
+    if (!data) {
       contenedor.innerHTML = "<p>No hay promociones disponibles.</p>";
       return;
     }
+
+    promociones = Object.entries(data).map(([id, promo]) => ({ id, ...promo }));
+
     promociones.forEach((promo, index) => {
       const div = document.createElement("div");
       div.className = "promo";
@@ -189,18 +211,11 @@
       `;
       contenedor.appendChild(div);
     });
-  });
+  }
 
   function mostrarModal(index) {
-  indiceActual = index;
-  const promo = promociones[index];
-  let productosHTML = "";
-if (promo.productos && promo.productos.length > 0) {
-  const bloques = promo.productos.map(prod => {
-    const cat = prod.categoria;
-    const productosCat = JSON.parse(localStorage.getItem(cat)) || [];
-    const producto = productosCat.find(p => p.descripcion === prod.descripcion);
-    if (!producto) return '';
+    indiceActual = index;
+    const promo = promociones[index];
 
     const enlaces = {
       caballero: "lentes.html",
@@ -209,69 +224,52 @@ if (promo.productos && promo.productos.length > 0) {
       niñas: "niñas.html",
       accesorios: "accesorios.html"
     };
-    const url = enlaces[cat] || "#";
 
-    return `
-      <div style="margin:10px;">
-        <img src="${producto.imagen}" style="width:100px;height:100px;object-fit:cover;border-radius:8px;"><br>
-        <p>${producto.descripcion}</p>
-        <p>
-          <strong>$${producto.precio}</strong>
-          <a href="${url}?resaltar=${encodeURIComponent(producto.descripcion)}" title="Ver producto" target="_blank" style="margin-left:8px;">
-            <i class="fas fa-eye"></i>
-          </a>
-        </p>
+    let categoriasHTML = "";
+    if (promo.categorias) {
+      const links = promo.categorias.map(cat => {
+        const texto = cat.charAt(0).toUpperCase() + cat.slice(1);
+        const url = enlaces[cat] || "#";
+        return `<a href="${url}" target="_blank">${texto}</a>`;
+      }).join(", ");
+      categoriasHTML = `<p><strong>Categorías:</strong> ${links}</p>`;
+    }
+
+    let productosHTML = "";
+    if (promo.productos) {
+      const bloques = promo.productos.map(prod => `
+        <div style="margin:10px; text-align:center;">
+          <img src="${prod.imagen || ''}" style="width:100px;height:100px;object-fit:cover;border-radius:8px;"><br>
+          <p>${prod.descripcion}</p>
+          <p>
+            <strong>${prod.categoria}</strong>
+            <a href="${enlaces[prod.categoria] || '#'}?resaltar=${encodeURIComponent(prod.descripcion)}" title="Ver producto" target="_blank">
+              <i class="fas fa-eye"></i>
+            </a>
+          </p>
+        </div>
+      `).join("");
+      productosHTML = `<h3>Productos relacionados:</h3><div style="display:flex;flex-wrap:wrap;gap:10px;">${bloques}</div>`;
+    }
+
+    const contenido = document.getElementById("modal-contenido");
+    contenido.innerHTML = `
+      <span class="cerrar" onclick="cerrarModal()">&times;</span>
+      <button class="navegar prev" onclick="cambiarPromo(-1)">&#10094;</button>
+      <div class="modal-imagen">
+        <img src="${promo.imagen}" alt="Promoción">
       </div>
+      <div class="modal-info">
+        <h2>Detalles de la Promoción</h2>
+        <p><strong>Descripción:</strong> ${promo.descripcion}</p>
+        ${categoriasHTML}
+        <p><strong>Válido hasta:</strong> ${promo.vencimiento || "Sin fecha"}</p>
+        ${productosHTML}
+      </div>
+      <button class="navegar next" onclick="cambiarPromo(1)">&#10095;</button>
     `;
-  }).filter(Boolean).join('');
-
-  if (bloques) {
-    productosHTML = `
-      <h3>Productos relacionados:</h3>
-      <div style="display:flex; flex-wrap:wrap; gap:10px;">${bloques}</div>
-    `;
+    document.getElementById("modal").style.display = "block";
   }
-}
-
-
-  let categoriasHTML = "";
-if (promo.categorias && promo.categorias.length > 0) {
-  const enlaces = {
-    caballero: "lentes.html",
-    dama: "damas.html",
-    niños: "niños.html",
-    niñas: "niñas.html",
-    accesorios: "accesorios.html"
-  };
-  const links = promo.categorias.map(cat => {
-    const texto = cat.charAt(0).toUpperCase() + cat.slice(1);
-    const url = enlaces[cat] || "#";
-    return `<a href="${url}" target="_blank">${texto}</a>`;
-  }).join(", ");
-  categoriasHTML = `<p><strong>Categorías:</strong> ${links}</p>`;
-}
-
-
-  const contenido = document.getElementById("modal-contenido");
-  contenido.innerHTML = `
-    <span class="cerrar" onclick="cerrarModal()">&times;</span>
-    <button class="navegar prev" onclick="cambiarPromo(-1)">&#10094;</button>
-    <div class="modal-imagen">
-      <img src="${promo.imagen}" alt="Promoción">
-    </div>
-    <div class="modal-info">
-      <h2>Detalles de la Promoción</h2>
-      <p><strong>Descripción:</strong> ${promo.descripcion}</p>
-      ${categoriasHTML}
-<p><strong>Válido hasta:</strong> ${promo.vencimiento || "Sin fecha"}</p>
-${productosHTML}
-
-    </div>
-    <button class="navegar next" onclick="cambiarPromo(1)">&#10095;</button>
-  `;
-  document.getElementById("modal").style.display = "block";
-}
-
 
   function cerrarModal() {
     document.getElementById("modal").style.display = "none";
@@ -283,7 +281,10 @@ ${productosHTML}
     else if (indiceActual >= promociones.length) indiceActual = 0;
     mostrarModal(indiceActual);
   }
+
+  window.onload = cargarPromociones;
 </script>
+
 
 </head>
 <body>
