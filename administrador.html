@@ -93,7 +93,10 @@
   <main>
     <section class="admin-container">
       <h2>Gestión de Contenido</h2>
-
+      <div class="formulario promo-list">
+      <h3>Productos registrados</h3>
+      <div id="listaProductos"></div>
+    </div>
       <!-- Formulario Productos -->
       <div class="formulario">
         <h3>Subir Producto</h3>
@@ -235,42 +238,65 @@
     }
 
     function mostrarProductos() {
-      const cont = document.getElementById("listaProductos");
-      cont.innerHTML = "";
-      ["caballero", "dama", "niños", "niñas", "accesorios"].forEach(cat => {
-        db.ref(`productos/${cat}`).once("value").then(snap => {
-          const productos = snap.val();
-          if (productos) {
-            Object.entries(productos).forEach(([id, p]) => {
-              const div = document.createElement("div");
-              div.className = "promo-item";
-              div.innerHTML = `
-                <img src="${p.imagen}" class="editar-img">
-<br><button onclick="actualizarImagen('producto', '${cat}', '${id}')">Cambiar Imagen</button>
+  const cont = document.getElementById("listaProductos");
+  cont.innerHTML = "";
+  const categorias = ["caballero", "dama", "niños", "niñas", "accesorios"];
 
-
-
-                <div class="promo-info">
-                  <input value="${p.descripcion}" onchange="actualizarCampoProducto('${cat}', '${id}', 'descripcion', this.value)">
-                  <input value="${p.precio}" onchange="actualizarCampoProducto('${cat}', '${id}', 'precio', this.value)">
-                  <button onclick="eliminarProducto('${cat}', '${id}')">Eliminar</button>
-                  <button onclick="actualizarTodoProducto('${cat}', '${id}')">Actualizar Todo</button>
-                </div>
-              `;
-              cont.appendChild(div);
-            });
-          }
+  categorias.forEach(cat => {
+    db.ref(`productos/${cat}`).once("value").then(snap => {
+      const productos = snap.val();
+      if (productos) {
+        Object.entries(productos).forEach(([id, p]) => {
+          const div = document.createElement("div");
+          div.className = "promo-item";
+          div.innerHTML = `
+            <img src="${p.imagen}" class="editar-img">
+            <div class="promo-info">
+              <input id="descripcion-${id}" value="${p.descripcion}">
+              <input id="precio-${id}" value="${p.precio}" type="number">
+              <select id="categoria-${id}">
+                <option value="caballero" ${p.categoria === 'caballero' ? 'selected' : ''}>Caballero</option>
+                <option value="dama" ${p.categoria === 'dama' ? 'selected' : ''}>Dama</option>
+                <option value="niños" ${p.categoria === 'niños' ? 'selected' : ''}>Niños</option>
+                <option value="niñas" ${p.categoria === 'niñas' ? 'selected' : ''}>Niñas</option>
+                <option value="accesorios" ${p.categoria === 'accesorios' ? 'selected' : ''}>Accesorios</option>
+              </select>
+              <button onclick="actualizarTodoProducto('${cat}', '${id}')">Actualizar Todo</button>
+              <button onclick="eliminarProducto('${cat}', '${id}', '${p.imagen}')">Eliminar</button>
+            </div>`;
+          cont.appendChild(div);
         });
-      });
-    }
-function actualizarTodoProducto(cat, id) {
-  const inputs = document.querySelectorAll(`.promo-item input`);
-  const descripcion = inputs[0].value;
-  const precio = inputs[1].value;
-  db.ref(`productos/${cat}/${id}`).update({ descripcion, precio }).then(() => {
-    mostrarAlerta("Producto actualizado");
+      }
+    });
   });
 }
+
+function actualizarTodoProducto(cat, id) {
+  const descripcion = document.getElementById(`descripcion-${id}`).value;
+  const precio = document.getElementById(`precio-${id}`).value;
+  const nuevaCategoria = document.getElementById(`categoria-${id}`).value;
+
+  const productoActualizado = {
+    descripcion,
+    precio: Number(precio),
+    categoria: nuevaCategoria
+  };
+
+  if (nuevaCategoria !== cat) {
+    db.ref(`productos/${cat}/${id}`).once("value").then(snapshot => {
+      const producto = snapshot.val();
+      db.ref(`productos/${cat}/${id}`).remove();
+      db.ref(`productos/${nuevaCategoria}`).push({ ...producto, ...productoActualizado });
+      mostrarAlerta("Categoría cambiada y producto actualizado");
+      mostrarProductos();
+    });
+  } else {
+    db.ref(`productos/${cat}/${id}`).update(productoActualizado).then(() => {
+      mostrarAlerta("Producto actualizado");
+    });
+  }
+}
+
 
     function mostrarPromociones() {
       const cont = document.getElementById("listaPromociones");
@@ -335,7 +361,13 @@ function generarCheckboxProductos() {
   });
 }
 
-
+function eliminarProducto(cat, id, imagenUrl) {
+  db.ref(`productos/${cat}/${id}`).remove().then(() => {
+    eliminarDeCloudinary(imagenUrl);
+    mostrarAlerta("Producto eliminado");
+    mostrarProductos();
+  });
+}
 
     function actualizarCampoProducto(cat, id, campo, valor) {
       db.ref(`productos/${cat}/${id}/${campo}`).set(valor);
@@ -372,6 +404,7 @@ function generarCheckboxProductos() {
       document.getElementById("urlImagenProducto").value = "";
       document.getElementById("previewProducto").style.display = "none";
     }
+    
 function abrirEdicionProductos(idPromo) {
   const contenedor = document.createElement("div");
   contenedor.innerHTML = `<h4>Selecciona productos relacionados:</h4>`;
