@@ -311,10 +311,11 @@ function actualizarTodoProducto(cat, id) {
             div.className = "promo-item";
             div.setAttribute("data-promocion-id", id);
 
-            div.innerHTML = `
-  <img src="${promo.imagen}" class="editar-img">
-  <br><button onclick="actualizarImagen('promocion', null, '${id}')">Cambiar Imagen</button>
-
+           div.innerHTML = `
+  <div style="text-align: center;">
+    <img src="${promo.imagen}" class="editar-img"><br>
+    <button onclick="actualizarImagen('promocion', null, '${id}')">Cambiar Imagen</button>
+  </div>
   <div class="promo-info">
     <textarea onchange="actualizarCampoPromocion('${id}', 'descripcion', this.value)">${promo.descripcion}</textarea>
     <input type="date" value="${promo.vencimiento}" min="${new Date().toISOString().split('T')[0]}" onchange="actualizarCampoPromocion('${id}', 'vencimiento', this.value)">
