@@ -305,6 +305,8 @@ function actualizarTodoProducto(cat, id) {
           Object.entries(promos).forEach(([id, promo]) => {
             const div = document.createElement("div");
             div.className = "promo-item";
+            div.setAttribute("data-promocion-id", id);
+
             div.innerHTML = `
   <img src="${promo.imagen}" class="editar-img">
   <br><button onclick="actualizarImagen('promocion', null, '${id}')">Cambiar Imagen</button>
@@ -328,7 +330,9 @@ function actualizarTodoProducto(cat, id) {
 
     <div><strong>Productos relacionados:</strong> ${promo.productos?.map(p => `<div>${p.descripcion} (${p.categoria})</div>`).join("") || "Ninguno"}</div>
     <button onclick="abrirEdicionProductos('${id}')">Editar productos relacionados</button>
-    <button onclick="eliminarPromocion('${id}')">Eliminar</button>
+<button onclick="actualizarTodoPromocion('${id}')">Actualizar Todo</button>
+<button onclick="eliminarPromocion('${id}')">Eliminar</button>
+
   </div>
 `;
 
@@ -338,6 +342,31 @@ function actualizarTodoProducto(cat, id) {
         }
       });
     }
+    function actualizarTodoPromocion(id) {
+  const container = document.querySelector(`[data-promocion-id="${id}"]`);
+  const descripcion = container.querySelector("textarea").value;
+  const vencimiento = container.querySelector('input[type="date"]').value;
+
+  const categorias = Array.from(container.querySelectorAll(`input[name="cat_${id}"]:checked`)).map(cb => cb.value);
+
+  const productos = Array.from(container.querySelectorAll("input[name='productoEditar']:checked")).map(cb => ({
+    id: cb.value,
+    descripcion: cb.getAttribute("data-descripcion"),
+    categoria: cb.getAttribute("data-categoria"),
+    imagen: cb.getAttribute("data-imagen") || ""
+  }));
+
+  db.ref(`promociones/${id}`).update({
+    descripcion,
+    vencimiento,
+    categorias,
+    productos
+  }).then(() => {
+    mostrarAlerta("Promoción actualizada correctamente");
+    mostrarPromociones();
+  });
+}
+
 function generarCheckboxProductos() {
   const contenedor = document.getElementById("productosCheckboxes");
   contenedor.innerHTML = "";
