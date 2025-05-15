@@ -181,7 +181,7 @@ async function cargarProductos() {
       const contenedor = document.getElementById("productos");
       contenedor.innerHTML = "";
 
-      const snapshot = await db.ref("productos/caballeros").once("value");
+      const snapshot = await db.ref("productos/caballero").once("value");
       const data = snapshot.val();
       if (!data) return;
 
