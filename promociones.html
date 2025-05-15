@@ -213,7 +213,7 @@
     });
   }
 
-  function mostrarModal(index) {
+ async function mostrarModal(index) {
     indiceActual = index;
     const promo = promociones[index];
 
@@ -237,19 +237,26 @@
 
     let productosHTML = "";
     if (promo.productos) {
-      const bloques = promo.productos.map(prod => `
-        <div style="margin:10px; text-align:center;">
-          <img src="${prod.imagen || ''}" style="width:100px;height:100px;object-fit:cover;border-radius:8px;"><br>
-          <p>${prod.descripcion}</p>
-          <p>
-            <strong>${prod.categoria}</strong>
-            <a href="${enlaces[prod.categoria] || '#'}?resaltar=${encodeURIComponent(prod.descripcion)}" title="Ver producto" target="_blank">
-              <i class="fas fa-eye"></i>
-            </a>
-          </p>
-        </div>
-      `).join("");
-      productosHTML = `<h3>Productos relacionados:</h3><div style="display:flex;flex-wrap:wrap;gap:10px;">${bloques}</div>`;
+      const bloques = await Promise.all(promo.productos.map(async prod => {
+        const snap = await db.ref(`productos/${prod.categoria}/${prod.id}`).once("value");
+        const data = snap.val();
+        if (!data) return "";
+
+        return `
+          <div style="margin:10px; text-align:center;">
+            <img src="${data.imagen}" style="width:100px;height:100px;object-fit:cover;border-radius:8px;"><br>
+            <p>${data.descripcion}</p>
+            <p>
+              <strong>${data.categoria}</strong>
+              <a href="${enlaces[data.categoria] || '#'}?resaltar=${encodeURIComponent(data.descripcion)}" title="Ver producto" target="_blank">
+                <i class="fas fa-eye"></i>
+              </a>
+            </p>
+          </div>
+        `;
+      }));
+
+      productosHTML = `<h3>Productos relacionados:</h3><div style="display:flex;flex-wrap:wrap;gap:10px;">${bloques.join("")}</div>`;
     }
 
     const contenido = document.getElementById("modal-contenido");
