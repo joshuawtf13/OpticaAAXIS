@@ -307,17 +307,27 @@ function actualizarTodoProducto(cat, id) {
             div.className = "promo-item";
             div.innerHTML = `
   <img src="${promo.imagen}" class="editar-img">
-<br><button onclick="actualizarImagen('promocion', null, '${id}')">Cambiar Imagen</button>
+  <br><button onclick="actualizarImagen('promocion', null, '${id}')">Cambiar Imagen</button>
 
   <div class="promo-info">
     <textarea onchange="actualizarCampoPromocion('${id}', 'descripcion', this.value)">${promo.descripcion}</textarea>
     <input type="date" value="${promo.vencimiento}" min="${new Date().toISOString().split('T')[0]}" onchange="actualizarCampoPromocion('${id}', 'vencimiento', this.value)">
+    
+    <div><strong>Categorías:</strong><br>
+      ${["caballero", "dama", "niños", "niñas", "accesorios"].map(cat => {
+        const checked = promo.categorias?.includes(cat) ? "checked" : "";
+        return `<label style="margin-right: 10px;">
+                  <input type="checkbox" onchange="actualizarCategoriaPromocion('${id}')" name="cat_${id}" value="${cat}" ${checked}> ${cat.charAt(0).toUpperCase() + cat.slice(1)}
+                </label>`;
+      }).join("")}
+    </div>
 
     <div><strong>Productos relacionados:</strong> ${promo.productos?.map(p => `<div>${p.descripcion} (${p.categoria})</div>`).join("") || "Ninguno"}</div>
     <button onclick="abrirEdicionProductos('${id}')">Editar productos relacionados</button>
     <button onclick="eliminarPromocion('${id}')">Eliminar</button>
   </div>
 `;
+
 
             cont.appendChild(div);
           });
@@ -475,6 +485,14 @@ function abrirEdicionProductos(idPromo) {
       document.getElementById("previewPromocion").style.display = "none";
       document.querySelectorAll("input[name='categoriaPromo']").forEach(cb => cb.checked = false);
     }
+    function actualizarCategoriaPromocion(id) {
+  const checkboxes = document.querySelectorAll(`input[name="cat_${id}"]:checked`);
+  const categorias = Array.from(checkboxes).map(cb => cb.value);
+  db.ref(`promociones/${id}/categorias`).set(categorias).then(() => {
+    mostrarAlerta("Categorías actualizadas");
+  });
+}
+
 function actualizarImagen(tipo, categoria, id) {
   const input = document.createElement("input");
   input.type = "file";
