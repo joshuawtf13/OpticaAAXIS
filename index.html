@@ -71,6 +71,31 @@
       margin-top: 40px;
     }
     .footer-info p, .admin-link { margin: 5px 0; }
+    .navegar {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 30px;
+  font-weight: bold;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333;
+  z-index: 10;
+}
+
+.navegar:hover {
+  color: #000;
+}
+
+.navegar.prev {
+  left: 10px;
+}
+
+.navegar.next {
+  right: 10px;
+}
+
   </style>
 </head>
 <body>
@@ -118,8 +143,9 @@
       <a id="modal-link" href="#" style="color: #007BFF; display: block; margin: 10px 0;">Ver más de esta categoría</a>
     </div>
     <div class="modal-navegacion">
-      <button onclick="navegarProducto(-1)">&#8592;</button>
-      <button onclick="navegarProducto(1)">&#8594;</button>
+      <button class="navegar prev" onclick="navegarProducto(-1)">&#10094;</button>
+<button class="navegar next" onclick="navegarProducto(1)">&#10095;</button>
+
     </div>
   </div>
 </div>
