@@ -346,6 +346,19 @@ function actualizarTodoProducto(cat, id) {
         }
       });
     }
+    async function eliminarPromocionesVencidas() {
+  const hoy = new Date().toISOString().split("T")[0];
+  const snapshot = await db.ref("promociones").once("value");
+  const promociones = snapshot.val();
+  if (!promociones) return;
+
+  Object.entries(promociones).forEach(([id, promo]) => {
+    if (promo.vencimiento && promo.vencimiento < hoy) {
+      db.ref(`promociones/${id}`).remove();
+    }
+  });
+}
+
     function actualizarTodoPromocion(id) {
   const container = document.querySelector(`[data-promocion-id="${id}"]`);
   const descripcion = container.querySelector("textarea").value;
@@ -550,11 +563,14 @@ function actualizarImagen(tipo, categoria, id) {
 }
 
     window.onload = () => {
-      mostrarProductos();
-      mostrarPromociones();
-      document.getElementById("vencimientoPromocion").min = new Date().toISOString().split("T")[0];
-      generarCheckboxProductos();
-    };
+  eliminarPromocionesVencidas().then(() => {
+    mostrarProductos();
+    mostrarPromociones();
+  });
+  document.getElementById("vencimientoPromocion").min = new Date().toISOString().split("T")[0];
+  generarCheckboxProductos();
+};
+
   </script>
 </body>
 </html>
