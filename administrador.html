@@ -241,6 +241,11 @@
   const categorias = ["caballero", "dama", "niños", "niñas", "accesorios"];
 
   categorias.forEach(cat => {
+    const details = document.createElement("details");
+    const summary = document.createElement("summary");
+    summary.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+    details.appendChild(summary);
+
     db.ref(`productos/${cat}`).once("value").then(snap => {
       const productos = snap.val();
       if (productos) {
@@ -253,10 +258,10 @@
               <button onclick="actualizarImagen('producto', '${cat}', '${id}')">Cambiar Imagen</button>
             </div>
             <div class="promo-info">
-              <input id="descripcion-${id}" value="${p.descripcion}" onchange="actualizarCampoProducto('${cat}', '${id}', 'descripcion', this.value)">
-              <input id="precio-${id}" value="${p.precio}" onchange="actualizarCampoProducto('${cat}', '${id}', 'precio', this.value)">
-              <select id="categoria-${id}" onchange="actualizarCampoProducto('${cat}', '${id}', 'categoria', this.value)">
-                ${["caballero", "dama", "niños", "niñas", "accesorios"].map(c => `
+              <input value="${p.descripcion}" onchange="actualizarCampoProducto('${cat}', '${id}', 'descripcion', this.value)">
+              <input value="${p.precio}" onchange="actualizarCampoProducto('${cat}', '${id}', 'precio', this.value)">
+              <select onchange="actualizarCampoProducto('${cat}', '${id}', 'categoria', this.value)">
+                ${categorias.map(c => `
                   <option value="${c}" ${p.categoria === c ? "selected" : ""}>${c.charAt(0).toUpperCase() + c.slice(1)}</option>
                 `).join("")}
               </select>
@@ -266,12 +271,19 @@
               </div>
             </div>
           `;
-          cont.appendChild(div);
+          details.appendChild(div);
         });
+      } else {
+        const mensaje = document.createElement("p");
+        mensaje.textContent = "No hay productos registrados en esta categoría.";
+        details.appendChild(mensaje);
       }
     });
+
+    cont.appendChild(details);
   });
 }
+
 
 function actualizarTodoProducto(cat, id) {
   const descripcion = document.getElementById(`descripcion-${id}`).value;
