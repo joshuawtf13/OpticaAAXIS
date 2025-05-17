@@ -208,7 +208,14 @@
       const imagenURL = document.getElementById("urlImagenProducto").value;
       if (!descripcion || !precio || !imagenURL) return alert("Completa todos los campos");
 
-      const producto = { descripcion, precio: Number(precio), categoria, imagen: imagenURL };
+      const producto = {
+  descripcion,
+  precio: Number(precio),
+  categoria,
+  imagen: imagenURL,
+  timestamp: Date.now()
+};
+
       await db.ref(`productos/${categoria}`).push(producto);
       mostrarAlerta("Producto guardado");
       limpiarFormularioProducto();
