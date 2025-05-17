@@ -220,7 +220,10 @@
       }
     }
 
-    todos = todos.reverse().slice(0, 15);
+    todos = todos
+  .sort((a, b) => b.timestamp - a.timestamp) // ordena de más nuevo a más antiguo
+  .slice(0, 15);
+
     productosGlobal = todos;
 
     todos.forEach(producto => {
