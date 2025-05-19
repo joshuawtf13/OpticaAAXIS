@@ -476,3 +476,110 @@ html, body {
   color: #333;
   cursor: pointer;
 }
+/* =================== */
+/* RESPONSIVE DESIGN */
+/* =================== */
+
+@media (max-width: 1024px) {
+  .info-container,
+  .nosotros-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .nosotros-texto, .nosotros-mapa {
+    width: 100%;
+  }
+
+  .logo-container {
+    justify-content: flex-start;
+    padding-left: 20px;
+  }
+
+  nav {
+    padding-right: 20px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .admin-container {
+    width: 90%;
+  }
+
+  .productos-container,
+  .catalogo {
+    gap: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .logo-container {
+    padding-left: 0;
+    justify-content: center;
+  }
+
+  nav {
+    justify-content: center;
+    padding-right: 0;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .producto,
+  .producto-card,
+  .promocion {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .promo-item {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .modal-contenido {
+    flex-direction: column;
+  }
+
+  .modal-imagen,
+  .modal-info {
+    width: 100%;
+  }
+
+  .admin-action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .footer-info, .admin-link {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .producto-card img,
+  .producto img,
+  .promocion img {
+    height: 150px;
+  }
+
+  .carrusel img {
+    height: 200px;
+  }
+
+  .modal-contenido {
+    max-width: 95%;
+  }
+}
+
