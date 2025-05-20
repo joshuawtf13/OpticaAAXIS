@@ -8,156 +8,221 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 999;
-      background-color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 20px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .logo-container {
-      display: flex;
-      align-items: center;
-    }
-
-    .logo-container img {
-      height: 130px;
-      margin-right: 15px;
-      padding-left: 90px;
-    }
-
-    header h1 {
-      font-size: 24px;
-      margin: 0;
-    }
-
-    nav {
+    /* Estilos base */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background-color: #fff;
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   flex-wrap: wrap;
-  gap: 15px;
-  justify-content: flex-end;
-  padding-right: 200px; /* Espacio a la derecha */
 }
 
+.logo-container {
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+}
 
-    nav a {
-      text-decoration: none;
-      color: #333;
-      font-weight: bold;
-      padding: 5px 10px;
-    }
+.logo-container img {
+  height: 100px;
+  max-height: 120px;
+  object-fit: contain;
+}
 
-    main {
-      padding-top: 100px; /* Espacio para header fijo */
-    }
-    .producto {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: pointer;
-      padding: 10px;
-      border-radius: 10px;
-      background-color: #fff;
-    }
+header h1 {
+  font-size: 24px;
+  margin: 0;
+  color: #333;
+}
 
-    .producto:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    }
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 10px 20px;
+}
 
-    .catalogo {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-      padding: 20px;
-    }
+nav a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
 
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 9999;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.6);
-    }
+nav a:hover {
+  background-color: #4682B4;
+  color: #fff;
+}
 
-    .modal-contenido {
-      background-color: #fff;
-      margin: 5% auto;
-      padding: 20px;
-      border-radius: 10px;
-      width: 80%;
-      max-width: 800px;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      position: relative;
-    }
+main {
+  padding-top: 100px;
+}
 
-    .modal-imagen {
-      flex: 1;
-      padding: 10px;
-      text-align: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 300px;
-      max-height: 300px;
-    }
+.catalogo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  padding: 20px;
+}
 
-    .modal-imagen img {
-      width: 300px;
-      height: 300px;
-      object-fit: contain;
-      border-radius: 8px;
-    }
+.producto {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  width: 220px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
 
-    .modal-info {
-      flex: 1;
-      padding: 20px;
-      text-align: left;
-    }
+.producto img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+}
 
-    .cerrar {
-      position: absolute;
-      top: 10px;
-      right: 20px;
-      font-size: 24px;
-      font-weight: bold;
-      cursor: pointer;
-      color: #333;
-    }
+.producto:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
 
-    .navegar {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 30px;
-      font-weight: bold;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #333;
-    }
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+}
 
-    .navegar:hover {
-      color: #000;
-    }
+.modal-contenido {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  width: 90%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+}
 
-    .prev {
-      left: 10px;
-    }
+.modal-imagen {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    .next {
-      right: 10px;
-    }
+.modal-imagen img {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.modal-info {
+  flex: 1;
+  padding: 20px;
+  text-align: left;
+}
+
+.cerrar {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #333;
+}
+
+.navegar {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 30px;
+  font-weight: bold;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333;
+}
+
+.navegar:hover {
+  color: #000;
+}
+
+.prev { left: 10px; }
+.next { right: 10px; }
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .logo-container img {
+    height: 80px;
+  }
+
+  .producto {
+    width: 180px;
+  }
+}
+
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .logo-container {
+    justify-content: center;
+    padding: 0;
+  }
+
+  nav {
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .modal-contenido {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .producto {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .producto img {
+    height: 150px;
+  }
+
+  .modal-imagen img {
+    max-width: 90%;
+  }
+
+  .modal-info {
+    padding: 10px;
+  }
+}
+
   </style>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
