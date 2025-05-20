@@ -420,13 +420,21 @@ nav a:hover {
     });
   }
 
+const rutasCategoria = {
+  caballero: "lentes.html",
+  dama: "damas.html",
+  niños: "niños.html",
+  niñas: "niñas.html",
+  accesorios: "accesorios.html"
+};
 
   function mostrarModal(producto) {
     document.getElementById("modal-img").src = producto.imagen;
     document.getElementById("modal-descripcion").textContent = `Descripción: ${producto.descripcion}`;
     document.getElementById("modal-precio").textContent = `Precio: $${producto.precio}`;
     document.getElementById("modal-categoria").textContent = `Categoría: ${producto.categoria}`;
-    document.getElementById("modal-link").href = `${producto.categoria}.html`;
+    document.getElementById("modal-link").href = rutasCategoria[producto.categoria] || "#";
+
     document.getElementById("modal").style.display = "flex";
     indexProducto = productosGlobal.findIndex(p => p.descripcion === producto.descripcion && p.categoria === producto.categoria);
   }
