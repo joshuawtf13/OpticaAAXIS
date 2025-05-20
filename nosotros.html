@@ -57,7 +57,96 @@ header {
       padding-top: 100px; /* Espacio para header fijo */
     }
 
+</style><style>
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    flex-wrap: wrap;
+  }
+
+  .logo-container {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    justify-content: flex-start;
+  }
+
+  .logo-container img {
+    height: 100px;
+    padding-left: 10px;
+  }
+
+  header h1 {
+    font-size: 24px;
+    margin: 0;
+  }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-end;
+    flex: 2;
+    padding-right: 20px;
+  }
+
+  nav a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    padding: 8px 12px;
+    transition: background-color 0.3s;
+  }
+
+  nav a:hover {
+    background-color: #4682B4;
+    color: white;
+    border-radius: 5px;
+  }
+
+  main {
+    padding-top: 100px;
+  }
+
+  /* Responsivo */
+  @media (max-width: 768px) {
+    header {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .logo-container {
+      justify-content: center;
+    }
+
+    .logo-container img {
+      height: 80px;
+      padding-left: 0;
+      margin: 0 auto;
+    }
+
+    nav {
+      justify-content: center;
+      padding-right: 0;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    nav a {
+      font-size: 14px;
+      padding: 6px 10px;
+    }
+  }
 </style>
+
 <body>
   <header>
     <div class="logo-container">
