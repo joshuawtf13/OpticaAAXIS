@@ -179,6 +179,100 @@ nav a:hover {
   display: none;
 }
 
+/* ====== Estilos para navegación entre productos en el modal ====== */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-contenido {
+  background-color: #fff;
+  margin: 5% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: relative;
+}
+
+.modal-imagen {
+  flex: 1;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-imagen img {
+  width: 300px;
+  height: 300px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.modal-info {
+  flex: 1;
+  padding: 20px;
+  text-align: left;
+}
+
+.cerrar {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #333;
+}
+
+.navegar {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 30px;
+  font-weight: bold;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333;
+  z-index: 10000;
+}
+
+.navegar:hover {
+  color: #000;
+}
+
+.prev {
+  left: 10px;
+}
+
+.next {
+  right: 10px;
+}
+
+@media (max-width: 768px) {
+  .modal-contenido {
+    flex-direction: column;
+  }
+
+  .modal-imagen img {
+    width: 100%;
+    height: auto;
+  }
+}
 
   </style>
 </head>
@@ -220,19 +314,20 @@ nav a:hover {
 <div id="modal" class="modal" onclick="cerrarModal()">
   <div class="modal-contenido" onclick="event.stopPropagation()">
     <span class="cerrar" onclick="cerrarModal()">&times;</span>
-    <img id="modal-img" />
-    <div class="modal-detalles">
+    <button class="navegar prev" onclick="navegarProducto(-1)">&#10094;</button>
+    <div class="modal-imagen">
+      <img id="modal-img" />
+    </div>
+    <div class="modal-info">
       <p id="modal-descripcion"></p>
       <p id="modal-precio"></p>
       <p id="modal-categoria"></p>
-      <a id="modal-link" href="#" style="color: #007BFF; display: block; margin: 10px 0;">Ver más de esta categoría</a>
+      <a id="modal-link" href="#" style="color: #007BFF;">Ver más de esta categoría</a>
     </div>
-    <div class="modal-navegacion">
-      <button class="navegar prev" onclick="navegarProducto(-1)">&#10094;</button>
-<button class="navegar next" onclick="navegarProducto(1)">&#10095;</button>
-
-    </div>
+    <button class="navegar next" onclick="navegarProducto(1)">&#10095;</button>
   </div>
+</div>
+
 </div>
 
 <!-- Footer -->
