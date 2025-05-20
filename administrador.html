@@ -94,7 +94,8 @@
     <section class="admin-container">
       <h2>Gestión de Contenido</h2>
       <div class="formulario promo-list">
-      
+      <button onclick="agregarTimestampFaltante()">Corregir productos sin timestamp</button>
+
       <!-- Formulario Productos -->
       <div class="formulario">
         <h3>Subir Producto</h3>
@@ -549,7 +550,8 @@ function abrirEdicionProductos(idPromo) {
 
 async function agregarTimestampFaltante() {
   const categorias = ["caballero", "dama", "niños", "niñas", "accesorios"];
-  
+  let actualizados = 0;
+
   for (let cat of categorias) {
     const snapshot = await db.ref(`productos/${cat}`).once("value");
     const data = snapshot.val();
@@ -562,12 +564,14 @@ async function agregarTimestampFaltante() {
         await db.ref(`productos/${cat}/${key}`).update({
           timestamp: Date.now()
         });
+        actualizados++;
       }
     }
   }
 
-  alert("Timestamps agregados a productos sin fecha");
+  alert(`Timestamps agregados a ${actualizados} productos sin fecha.`);
 }
+
 
     function limpiarFormularioPromocion() {
       document.getElementById("filePromocion").value = "";
