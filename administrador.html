@@ -547,6 +547,27 @@ function abrirEdicionProductos(idPromo) {
   });
 }
 
+async function agregarTimestampFaltante() {
+  const categorias = ["caballero", "dama", "niños", "niñas", "accesorios"];
+  
+  for (let cat of categorias) {
+    const snapshot = await db.ref(`productos/${cat}`).once("value");
+    const data = snapshot.val();
+
+    if (!data) continue;
+
+    for (const key in data) {
+      const producto = data[key];
+      if (!producto.timestamp) {
+        await db.ref(`productos/${cat}/${key}`).update({
+          timestamp: Date.now()
+        });
+      }
+    }
+  }
+
+  alert("Timestamps agregados a productos sin fecha");
+}
 
     function limpiarFormularioPromocion() {
       document.getElementById("filePromocion").value = "";
