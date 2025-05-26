@@ -320,7 +320,6 @@ nav a:hover {
     </div>
     <div class="modal-info">
       <p id="modal-descripcion"></p>
-      <p id="modal-precio"></p>
       <p id="modal-categoria"></p>
       <a id="modal-link" href="#" style="color: #007BFF;">Ver más de esta categoría</a>
     </div>
@@ -412,7 +411,6 @@ nav a:hover {
       card.innerHTML = `
         <img src="${producto.imagen}" alt="Producto">
         <p><strong>${producto.descripcion}</strong></p>
-        <p>$${producto.precio}</p>
         <p style="font-size: 14px;">Categoría: ${producto.categoria}</p>
       `;
       card.addEventListener("click", () => mostrarModal(producto));
@@ -431,7 +429,6 @@ const rutasCategoria = {
   function mostrarModal(producto) {
     document.getElementById("modal-img").src = producto.imagen;
     document.getElementById("modal-descripcion").textContent = `Descripción: ${producto.descripcion}`;
-    document.getElementById("modal-precio").textContent = `Precio: $${producto.precio}`;
     document.getElementById("modal-categoria").textContent = `Categoría: ${producto.categoria}`;
     document.getElementById("modal-link").href = rutasCategoria[producto.categoria] || "#";
 
