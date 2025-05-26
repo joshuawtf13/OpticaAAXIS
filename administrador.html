@@ -105,6 +105,7 @@
       <h2>Gestión de Contenido</h2>
       <div class="formulario promo-list">
       <button onclick="agregarTimestampFaltante()">Corregir pagina de inicio </button>
+        <button onclick="borrarTodosLosPrecios()">🧹 Borrar precios existentes</button>
 
       <!-- Formulario Productos -->
       <div class="formulario">
@@ -113,7 +114,7 @@
         <img id="previewProducto" class="preview-image" style="display:none;">
         <input type="hidden" id="urlImagenProducto">
         <input type="text" id="descripcionProducto" placeholder="Descripción">
-        <input type="number" id="precioProducto" placeholder="Precio">
+
         <select id="categoriaProducto">
           <option value="caballero">Caballero</option>
           <option value="dama">Dama</option>
@@ -214,14 +215,14 @@
 
     async function subirProducto() {
       const descripcion = document.getElementById("descripcionProducto").value.trim();
-      const precio = document.getElementById("precioProducto").value.trim();
+
       const categoria = document.getElementById("categoriaProducto").value;
       const imagenURL = document.getElementById("urlImagenProducto").value;
-      if (!descripcion || !precio || !imagenURL) return alert("Completa todos los campos");
+      if (!descripcion || !imagenURL) return alert("Completa todos los campos");
 
       const producto = {
   descripcion,
-  precio: Number(precio),
+
   categoria,
   imagen: imagenURL,
   timestamp: Date.now()
@@ -277,7 +278,6 @@
             </div>
             <div class="promo-info">
               <input value="${p.descripcion}" onchange="actualizarCampoProducto('${cat}', '${id}', 'descripcion', this.value)">
-              <input value="${p.precio}" onchange="actualizarCampoProducto('${cat}', '${id}', 'precio', this.value)">
               <select onchange="actualizarCampoProducto('${cat}', '${id}', 'categoria', this.value)">
                 ${categorias.map(c => `
                   <option value="${c}" ${p.categoria === c ? "selected" : ""}>${c.charAt(0).toUpperCase() + c.slice(1)}</option>
@@ -305,12 +305,10 @@
 
 function actualizarTodoProducto(cat, id) {
   const descripcion = document.getElementById(`descripcion-${id}`).value;
-  const precio = document.getElementById(`precio-${id}`).value;
   const nuevaCategoria = document.getElementById(`categoria-${id}`).value;
 
   const productoActualizado = {
     descripcion,
-    precio: Number(precio),
     categoria: nuevaCategoria
   };
 
@@ -489,7 +487,6 @@ function eliminarProducto(cat, id, imagenUrl) {
     function limpiarFormularioProducto() {
       document.getElementById("fileProducto").value = "";
       document.getElementById("descripcionProducto").value = "";
-      document.getElementById("precioProducto").value = "";
       document.getElementById("categoriaProducto").selectedIndex = 0;
       document.getElementById("urlImagenProducto").value = "";
       document.getElementById("previewProducto").style.display = "none";
@@ -624,7 +621,22 @@ function actualizarImagen(tipo, categoria, id) {
   document.getElementById("vencimientoPromocion").min = new Date().toISOString().split("T")[0];
   generarCheckboxProductos();
 };
+async function borrarTodosLosPrecios() {
+  const categorias = ["caballero", "dama", "niños", "niñas", "accesorios"];
 
+  for (let cat of categorias) {
+    const snapshot = await db.ref(`productos/${cat}`).once("value");
+    const productos = snapshot.val();
+    if (!productos) continue;
+
+    for (let id in productos) {
+      await db.ref(`productos/${cat}/${id}/precio`).remove();
+      console.log(`Precio eliminado de ${cat}/${id}`);
+    }
+  }
+
+  alert("Todos los precios han sido eliminados.");
+}
   </script>
 </body>
 </html>
