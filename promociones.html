@@ -217,8 +217,9 @@
 }
 
 .productos-relacionados {
-  grid-template-columns: repeat(2, 1fr);
-}
+    grid-template-columns: repeat(2, 1fr);
+    max-height: 250px;
+  }
 
     .modal-info {
       text-align: center;
@@ -243,9 +244,10 @@
     nav a {
       padding: 5px 8px;
     }
-    .productos-relacionados {
-  grid-template-columns: repeat(1, 1fr);
-}
+   .productos-relacionados {
+    grid-template-columns: repeat(1, 1fr);
+    max-height: 200px;
+  }
 
   }
  .productos-relacionados {
@@ -254,7 +256,11 @@
   gap: 15px;
   margin-top: 20px;
   width: 100%;
+  max-height: 300px;        /* Altura máxima visible */
+  overflow-y: auto;         /* Scroll vertical si excede */
+  padding-right: 10px;
 }
+
 
 .producto-relacionado {
   background: #f9f9f9;
@@ -262,7 +268,11 @@
   padding: 10px;
   text-align: center;
   box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 130px;
+  box-sizing: border-box;
 }
+
 
 .producto-relacionado img {
   width: 100%;
