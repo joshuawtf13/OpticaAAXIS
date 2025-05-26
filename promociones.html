@@ -321,69 +321,74 @@
   }
 
  async function mostrarModal(index) {
-    indiceActual = index;
-    const promo = promociones[index];
+  indiceActual = index;
+  const promo = promociones[index];
 
-    const enlaces = {
-      caballero: "lentes.html",
-      dama: "damas.html",
-      niños: "niños.html",
-      niñas: "niñas.html",
-      accesorios: "accesorios.html"
-    };
+  const enlaces = {
+    caballero: "lentes.html",
+    dama: "damas.html",
+    niños: "niños.html",
+    niñas: "niñas.html",
+    accesorios: "accesorios.html"
+  };
 
-    let categoriasHTML = "";
-    if (promo.categorias) {
-      const links = promo.categorias.map(cat => {
-        const texto = cat.charAt(0).toUpperCase() + cat.slice(1);
-        const url = enlaces[cat] || "#";
-        return `<a href="${url}" target="_blank">${texto}</a>`;
-      }).join(", ");
-      categoriasHTML = `<p><strong>Categorías:</strong> ${links}</p>`;
-    }
-
-    let productosHTML = "";
-    if (promo.productos) {
-      const bloques = await Promise.all(promo.productos.map(async prod => {
-        const snap = await db.ref(`productos/${prod.categoria}/${prod.id}`).once("value");
-        const data = snap.val();
-        if (!data) return "";
-
-        return `
-          <div style="margin:10px; text-align:center;">
-            <img src="${data.imagen}" style="width:100px;height:100px;object-fit:cover;border-radius:8px;"><br>
-            <p>${data.descripcion}</p>
-            <p>
-              <strong>${data.categoria}</strong>
-              <a href="${enlaces[data.categoria] || '#'}?resaltar=${encodeURIComponent(data.descripcion)}" title="Ver producto" target="_blank">
-                <i class="fas fa-eye"></i>
-              </a>
-            </p>
-          </div>
-        `;
-      }));
-
-      productosHTML = `<h3>Productos relacionados:</h3><div style="display:flex;flex-wrap:wrap;gap:10px;">${bloques.join("")}</div>`;
-    }
-
-    const contenido = document.getElementById("modal-contenido");
-    contenido.innerHTML = `
-      <span class="cerrar" onclick="cerrarModal()">&times;</span>
-      <button class="navegar prev" onclick="cambiarPromo(-1)">&#10094;</button>
-      <div class="modal-imagen">
-        <img src="${promo.imagen}" alt="Promoción">
-      </div>
-      <div class="modal-info">
-        <h2>Detalles de la Promoción</h2>
-        <p><strong>Descripción:</strong> ${promo.descripcion}</p>
-        ${categoriasHTML}
-        <p><strong>Válido hasta:</strong> ${promo.vencimiento || "Sin fecha"}</p>
-        ${productosHTML}
-      </div>
-      <button class="navegar next" onclick="cambiarPromo(1)">&#10095;</button>
-    `;
-    document.getElementById("modal").style.display = "block";
+  let categoriasHTML = "";
+  if (promo.categorias) {
+    const links = promo.categorias.map(cat => {
+      const texto = cat.charAt(0).toUpperCase() + cat.slice(1);
+      const url = enlaces[cat] || "#";
+      return `<a href="${url}" target="_blank">${texto}</a>`;
+    }).join(", ");
+    categoriasHTML = `<p><strong>Categorías:</strong> ${links}</p>`;
   }
+
+  let productosHTML = "";
+  if (promo.productos) {
+    const bloques = await Promise.all(promo.productos.map(async prod => {
+      const snap = await db.ref(`productos/${prod.categoria}/${prod.id}`).once("value");
+      const data = snap.val();
+      if (!data) return "";
+
+      const url = enlaces[data.categoria] || "#";
+      return `
+        <div class="producto-relacionado">
+          <img src="${data.imagen}" alt="${data.descripcion}">
+          <p>${data.descripcion}</p>
+          <a href="${url}?resaltar=${encodeURIComponent(data.descripcion)}" title="Ver producto" target="_blank">
+            <i class="fas fa-eye"></i>
+          </a>
+        </div>
+      `;
+    }));
+
+    productosHTML = `
+      <h3>Productos relacionados:</h3>
+      <div class="productos-relacionados">
+        ${bloques.join("")}
+      </div>
+    `;
+  }
+
+  const contenido = document.getElementById("modal-contenido");
+  contenido.innerHTML = `
+    <span class="cerrar" onclick="cerrarModal()">&times;</span>
+    <button class="navegar prev" onclick="cambiarPromo(-1)">&#10094;</button>
+    <div class="modal-imagen">
+      <img src="${promo.imagen}" alt="Promoción">
+    </div>
+    <div class="modal-info">
+      <h2>Detalles de la Promoción</h2>
+      <p><strong>Descripción:</strong> ${promo.descripcion}</p>
+      ${categoriasHTML}
+      <p><strong>Válido hasta:</strong> ${promo.vencimiento || "Sin fecha"}</p>
+    </div>
+    <div style="width: 100%;">${productosHTML}</div>
+    <button class="navegar next" onclick="cambiarPromo(1)">&#10095;</button>
+  `;
+
+  document.getElementById("modal").style.display = "block";
+}
+
 
   function cerrarModal() {
     document.getElementById("modal").style.display = "none";
