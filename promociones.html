@@ -395,8 +395,11 @@
     else if (indiceActual >= promociones.length) indiceActual = 0;
     mostrarModal(indiceActual);
   }
+window.onload = () => {
+  document.getElementById("modal").style.display = "none";
+  cargarPromociones();
+};
 
-  window.onload = cargarPromociones;
 </script>
 
 
