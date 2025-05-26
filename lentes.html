@@ -252,7 +252,6 @@ async function cargarProductos() {
 
         item.innerHTML = `
           <img src="${producto.imagen}" alt="Producto" width="150" height="150">
-          <p><strong>Precio:</strong> $${producto.precio}</p>
           <p><strong>Descripción:</strong> ${producto.descripcion}</p>
         `;
         item.onclick = () => mostrarModal(index);
@@ -276,7 +275,6 @@ async function cargarProductos() {
         </div>
         <div class="modal-info">
           <h2>Vista previa del producto</h2>
-          <p><strong>Precio:</strong> $${producto.precio}</p>
           <p><strong>Descripción:</strong> ${producto.descripcion}</p>
         </div>
         <button class="navegar next" onclick="cambiarProducto(1)">&#10095;</button>
