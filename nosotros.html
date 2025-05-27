@@ -178,6 +178,84 @@ header {
 .imagenes-local img:hover {
   transform: scale(1.08);
 }
+/* Galería del Local */
+.galeria-local {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.galeria-local h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.imagenes-local {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.imagenes-local img {
+  width: 250px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.imagenes-local img:hover {
+  transform: scale(1.08);
+}
+
+/* Mapa + Instagram */
+.nosotros-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.nosotros-mapa, .instagram-gallery {
+  flex: 1;
+  min-width: 300px;
+}
+
+.nosotros-mapa h2,
+.instagram-gallery h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.nosotros-mapa iframe {
+  width: 100%;
+  height: 300px;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .imagenes-local img {
+    width: 90%;
+    height: auto;
+  }
+
+  .nosotros-info {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .nosotros-mapa iframe {
+    height: 250px;
+  }
+}
 
 </style>
 
@@ -199,26 +277,29 @@ header {
     </nav>
   </header>
 
-  <main class="nosotros-container">
-    <section class="nosotros-texto">
+  <!-- Galería del Local -->
+  <section class="galeria-local">
+    <h2>Conoce nuestro local</h2>
+    <div class="imagenes-local">
+      <img src="img/local1.jpg" alt="Foto del local 1">
+      <img src="img/local2.jpg" alt="Foto del local 2">
+      <img src="img/local3.jpg" alt="Foto del local 3">
+    </div>
+  </section>
+
+  <!-- Ubicación e Instagram -->
+  <section class="nosotros-info">
+    <div class="nosotros-mapa">
       <h2>Ubicación</h2>
       <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d942.7864965327484!2d-98.170218!3d19.057318!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cfc1acf7b357a9%3A0x455888dbf280eb2!2sI%20Zaragoza%20105%2C%20Lomas%205%20de%20Mayo%2C%2072270%20Heroica%20Puebla%20de%20Zaragoza%2C%20Pue.!5e0!3m2!1ses-419!2smx!4v1745252502048!5m2!1ses-419!2smx" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </section>
+    </div>
 
-    <!-- Galería de Instagram -->
-    <section class="instagram-gallery">
+    <div class="instagram-gallery">
       <h2 class="animated-title">Síguenos en Instagram</h2>
       <script src="https://static.elfsight.com/platform/platform.js" async></script>
       <div class="elfsight-app-7eecc42f-e827-4a88-9e1e-c1bbf4e5a99c" data-elfsight-app-lazy></div>
-    </section>
-    <section class="galeria-local">
-  <h2>Conoce nuestro local</h2>
-  <div class="imagenes-local">
-    <img src="Optica1.jpg" alt="Foto del local 1">
-    <img src="Optica2.jpg" alt="Foto del local 2">
-    <img src="Optica3.jpg" alt="Foto del local 3">
-  </div>
-</section>
+    </div>
+  </section>
 
   </main>
 
