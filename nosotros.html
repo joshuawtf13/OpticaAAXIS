@@ -144,7 +144,41 @@ header {
       font-size: 14px;
       padding: 6px 10px;
     }
+    .imagenes-local img {
+    width: 90%;
+    height: auto;
   }
+  }
+  .galeria-local {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.galeria-local h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.imagenes-local {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.imagenes-local img {
+  width: 250px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+  transition: transform 0.4s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.imagenes-local img:hover {
+  transform: scale(1.08);
+}
+
 </style>
 
 <body>
@@ -177,6 +211,15 @@ header {
       <script src="https://static.elfsight.com/platform/platform.js" async></script>
       <div class="elfsight-app-7eecc42f-e827-4a88-9e1e-c1bbf4e5a99c" data-elfsight-app-lazy></div>
     </section>
+    <section class="galeria-local">
+  <h2>Conoce nuestro local</h2>
+  <div class="imagenes-local">
+    <img src="Optica1.jpg" alt="Foto del local 1">
+    <img src="Optica2.jpg" alt="Foto del local 2">
+    <img src="Optica3.jpg" alt="Foto del local 3">
+  </div>
+</section>
+
   </main>
 
   <footer class="footer">
